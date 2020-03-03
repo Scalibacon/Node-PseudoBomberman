@@ -4,7 +4,7 @@ export const game = {
 	board_size : {x: 600, y: 400},
 
 	players : {
-		scali : {x: 0, y:0}
+		scali : {x: 0, y: 0, speed: 1, status: 'idle'}
 	},
 
 	generateEmptyBoard : function(){
@@ -18,25 +18,43 @@ export const game = {
 }
 
 const player_actions = {
-	ArrowUp : function(player){
+	ArrowUp : function(playerId){
 		game.players[player].y--;
 		console.log(game.players[player]);
 	},
 
-	ArrowDown : function(player){
+	ArrowDown : function(playerId){
 		game.players[player].y++;
 		console.log(game.players[player]);
 	},
 
-	ArrowRight : function(player){
-		game.players[player].x++;
-		console.log(game.players[player]);
+	ArrowRight : function(playerId){
+		let player = game.players[playerId];		
+
+		updatePosition(player, function(){
+			game.players[playerId].x++;
+		});
 	},
 
-	ArrowLeft : function(player){
+	ArrowLeft : function(playerId){
 		game.players[player].x--;
 		console.log(game.players[player]);
 	}
+}
+
+function updatePosition(player, after){
+	if(player.status != "idle"){
+		return;
+	}
+
+	player.status = "walking";
+
+	var delay = 200 / player.speed;
+
+	setTimeout(function(){
+		after();
+		player.status = "idle";
+	}, delay);
 }
 
 export function makeAnAction(command){

@@ -43,3 +43,7 @@ function drawPlayers(){
 		ctx.fillRect(player.x * 20, player.y * 20, 20, 20);
 	}
 }
+
+function drawAnimation(player){
+
+}
