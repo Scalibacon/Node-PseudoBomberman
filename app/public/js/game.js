@@ -4,7 +4,7 @@ export const game = {
 	board_size : {x: 600, y: 400},
 
 	players : {
-		scali : {x: 0, y: 0, speed: 1, status: 'idle'}
+		scali : {x: 0, y: 0, speed: 1, status: 'idle', dir: 'right'}
 	},
 
 	generateEmptyBoard : function(){
@@ -14,6 +14,14 @@ export const game = {
 				this.board[j][i] = 0;
 			}
 		}
+	}
+}
+
+export function makeAnAction(command){
+	let action = player_actions[command.keyPressed];
+
+	if(action){
+		action(command.player);
 	}
 }
 
@@ -29,16 +37,29 @@ const player_actions = {
 	},
 
 	ArrowRight : function(playerId){
-		let player = game.players[playerId];		
+		let player = game.players[playerId];			
 
-		updatePosition(player, function(){
-			game.players[playerId].x++;
-		});
+		let walk = walkTo["right"];
+		walk(player);
 	},
 
 	ArrowLeft : function(playerId){
 		game.players[player].x--;
 		console.log(game.players[player]);
+	}
+}
+
+const walkTo = {
+	"right" : function(player){
+		player.dir = 'right';	
+
+		if(player.x + 1 > 29){
+			return;
+		}
+
+		updatePosition(player, function(){
+			player.x++;
+		});
 	}
 }
 
@@ -53,16 +74,8 @@ function updatePosition(player, after){
 
 	setTimeout(function(){
 		after();
-		player.status = "idle";
+		setTimeout(function(){
+			player.status = "idle"; 
+		}, delay);
 	}, delay);
 }
-
-export function makeAnAction(command){
-	let action = player_actions[command.keyPressed];
-
-	if(action){
-		action(command.player);
-	}
-}
-
-//export {game};

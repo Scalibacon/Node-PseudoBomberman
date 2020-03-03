@@ -12,8 +12,8 @@ export function startDrawing(){
 
 function drawBoard(){
 	//console.log("Drawing board");
-	var canvas = document.getElementById('game_canvas');
-	var ctx = canvas.getContext('2d');
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
 
 	for(let i = 0; i < game.board_size.y / 20; i++){
 		for(let j = 0; j < game.board_size.x / 20; j++){
@@ -33,17 +33,24 @@ function drawBoard(){
 }
 
 function drawPlayers(){
-	var canvas = document.getElementById('game_canvas');
-	var ctx = canvas.getContext('2d');
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
 
 	for(let index in game.players){
 		let player = game.players[index];
+
+		/*
+		if(player.status == "walking"){
+			continue;
+		}
+		*/
 
 		ctx.fillStyle = `orange`;
 		ctx.fillRect(player.x * 20, player.y * 20, 20, 20);
 	}
 }
 
-function drawAnimation(player){
-
+export function drawWalkingAnimation(playerId, direction){
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
 }
