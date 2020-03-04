@@ -22,12 +22,22 @@ function drawBoard(){
 			ctx.fillRect(j * 20, i * 20, 20, 20);
 			*/
 
-			ctx.fillStyle = `rgba(60,240,180,0.5)`;
+			//empty
+			if(game.board[i][j] == 0){
+				ctx.fillStyle = `rgba(60,240,180,0.5)`;
+			}
+			//obsidian
+			if(game.board[i][j] == 1){
+				ctx.fillStyle = `rgba(50,0,50,0.5)`;
+			}
+
 			ctx.fillRect(j * 20, i * 20, 20, 20);
 
+			/* Give border to slot
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = `rgba(0,0,200,0.5)`;
 			ctx.strokeRect(j * 20, i * 20, 20, 20);
+			*/
 		}
 	}
 }
@@ -48,9 +58,4 @@ function drawPlayers(){
 		ctx.fillStyle = `orange`;
 		ctx.fillRect(player.x * 20, player.y * 20, 20, 20);
 	}
-}
-
-export function drawWalkingAnimation(playerId, direction){
-	let canvas = document.getElementById('game_canvas');
-	let ctx = canvas.getContext('2d');
 }
