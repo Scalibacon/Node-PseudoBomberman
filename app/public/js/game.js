@@ -1,25 +1,25 @@
 export const game = {
 	board : [],
 
-	board_size : {x: 620, y: 420},
+	board_size : {x: 17, y: 11},
 
 	players : {
-		scali : {x: 0, y: 0, speed: 2, status: 'idle', dir: 'right'}
+		scali : {x: 0, y: 0, speed: 1, status: 'idle', dir: 'right'}
 	},
 
 	generateEmptyBoard : function(){
-		this.board = initializeBiArray(this.board, 41);
-		for(let i = 0; i < 41; i++){
-			for(let j = 0; j < 61; j++){
+		this.board = initializeBiArray(this.board, 11);
+		for(let i = 0; i < 11; i++){
+			for(let j = 0; j < 17; j++){
 				this.board[i][j] = 0;
 			}
 		}
 	},
 
 	generateDefaultBoard : function(){
-		this.board = initializeBiArray(this.board, 41);
-		for(let i = 0; i < 41; i++){
-			for(let j = 0; j < 61; j++){
+		this.board = initializeBiArray(this.board, 11);
+		for(let i = 0; i < 11; i++){
+			for(let j = 0; j < 17; j++){
 				if((j + 1) % 2 == 0 && (i + 1) % 2 == 0){
 					this.board[i][j] = 1;
 				} else {
@@ -117,7 +117,7 @@ const player_actions = {
 
 function checkDestination(destination){
 	//border
-	if(destination.x < 0 || destination.x > 30 || destination.y < 0 || destination.y > 20){
+	if(destination.x < 0 || destination.x >= 17 || destination.y < 0 || destination.y >= 11){
 		return false;
 	}
 

@@ -6,8 +6,8 @@ function renderCanvas(){
 	//generate canvas
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'game_canvas');
-	canvas.setAttribute('width', 620);
-	canvas.setAttribute('height', 420);
+	canvas.setAttribute('width', 850);
+	canvas.setAttribute('height', 550);
 	document.body.appendChild(canvas);
 
 	//keyboard starts to listen
