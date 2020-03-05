@@ -14,7 +14,7 @@ export function createKeyboardListener(){
 	}
 
 	function notifyAll(command){
-		console.log(`Notificando ${state.observers.length} observers`);
+		//console.log(`Notificando ${state.observers.length} observers`);
 		state.observers.forEach(function(observer){
 			observer(command);
 		});
@@ -23,7 +23,7 @@ export function createKeyboardListener(){
 	document.addEventListener('keydown', handleKeyDown);
 
 	function handleKeyDown(event){
-		console.log(`Você pressionou ${event.key}`);
+		//console.log(`Você pressionou ${event.key}`);
 		var command = {
 			player : "scali",
 			keyPressed : event.key

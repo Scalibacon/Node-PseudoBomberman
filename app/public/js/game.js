@@ -4,7 +4,7 @@ export const game = {
 	board_size : {x: 620, y: 420},
 
 	players : {
-		scali : {x: 0, y: 0, speed: 5, status: 'idle', dir: 'right'}
+		scali : {x: 0, y: 0, speed: 2, status: 'idle', dir: 'right'}
 	},
 
 	generateEmptyBoard : function(){
@@ -51,13 +51,16 @@ const player_actions = {
 
 		player.dir = 'up';	
 
-		if(player.y - 1 < 0){
-			return;
+		let destination = {
+			x : player.x,
+			y : player.y - 1
 		}
 
-		updatePosition(player, function(){
-			player.y--;
-		});
+		if(checkDestination(destination)){
+			updatePosition(player, function(){
+				player.y--;
+			});
+		}
 	},
 
 	ArrowDown : function(playerId){
@@ -65,13 +68,16 @@ const player_actions = {
 
 		player.dir = 'down';	
 
-		if(player.y + 1 > 20){
-			return;
+		let destination = {
+			x : player.x,
+			y : player.y + 1
 		}
 
-		updatePosition(player, function(){
-			player.y++;
-		});
+		if(checkDestination(destination)){
+			updatePosition(player, function(){
+				player.y++;
+			});
+		}
 	},
 
 	ArrowRight : function(playerId){
@@ -79,28 +85,48 @@ const player_actions = {
 
 		player.dir = 'right';	
 
-		if(player.x + 1 > 30){
-			return;
+		let destination = {
+			x : player.x + 1,
+			y : player.y
 		}
 
-		updatePosition(player, function(){
-			player.x++;
-		});
+		if(checkDestination(destination)){
+			updatePosition(player, function(){
+				player.x++;
+			});
+		}
 	},
 
 	ArrowLeft : function(playerId){
 		let player = game.players[playerId];			
 
-		player.dir = 'left';	
+		player.dir = 'left';
 
-		if(player.x - 1 < 0){
-			return;
+		let destination = {
+			x : player.x - 1,
+			y : player.y
 		}
 
-		updatePosition(player, function(){
-			player.x--;
-		});
+		if(checkDestination(destination)){
+			updatePosition(player, function(){
+				player.x--;
+			});
+		}
 	}
+}
+
+function checkDestination(destination){
+	//border
+	if(destination.x < 0 || destination.x > 30 || destination.y < 0 || destination.y > 20){
+		return false;
+	}
+
+	//obsidian
+	if(game.board[destination.y][destination.x] == 1){
+		return false;
+	} 
+
+	return true;
 }
 
 function updatePosition(player, after){
