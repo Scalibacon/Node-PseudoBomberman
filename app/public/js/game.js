@@ -7,6 +7,8 @@ export const game = {
 		scali : {x: 0, y: 0, speed: 1, status: 'idle', dir: 'right'}
 	},
 
+	bombs : [],
+
 	generateEmptyBoard : function(){
 		this.board = initializeBiArray(this.board, 11);
 		for(let i = 0; i < 11; i++){
@@ -112,6 +114,23 @@ const player_actions = {
 				player.x--;
 			});
 		}
+	},
+
+	" " : function(playerId){		
+		let player = game.players[playerId];
+
+		//check if the spot can have a bomb
+		if(game.board[player.y][player.x] == 0){
+			let date = new Date();
+			let time = date.getTime();
+			let bomb = {
+				user : playerId,
+				x : player.x,
+				y : player.y,
+				time : 3
+			}
+			game.bombs.push(bomb);
+		}
 	}
 }
 
@@ -125,6 +144,14 @@ function checkDestination(destination){
 	if(game.board[destination.y][destination.x] == 1){
 		return false;
 	} 
+
+	//bombs
+	for(let index in game.bombs){
+		let bomb = game.bombs[index];
+		if(bomb.x == destination.x && bomb.y == destination.y){
+			return false;
+		}
+	}
 
 	return true;
 }

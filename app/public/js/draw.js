@@ -2,7 +2,7 @@ import {game} from './game.js';
 
 export function startDrawing(){
 	drawBoard();
-
+	drawBombs();
 	drawPlayers();
 
 	//console.log(`Draw scali: ${game.players.scali.x}`);
@@ -45,5 +45,19 @@ function drawPlayers(){
 
 		ctx.fillStyle = `orange`;
 		ctx.fillRect(player.x * 50 + 5, player.y * 50 + 5, 40, 40);
+	}
+}
+
+function drawBombs(){
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
+
+	for(let index in game.bombs){
+		let bomb = game.bombs[index];
+
+		ctx.fillStyle = `green`;
+		ctx.beginPath();
+		ctx.arc(bomb.x * 50 + 25, bomb.y * 50 + 25, 25, 0, 2 * Math.PI);
+		ctx.fill();
 	}
 }
