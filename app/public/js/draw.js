@@ -54,10 +54,21 @@ function drawBombs(){
 
 	for(let index in game.bombs){
 		let bomb = game.bombs[index];
+		let time = parseInt(bomb.time / 1000) + 1;
 
 		ctx.fillStyle = `green`;
 		ctx.beginPath();
 		ctx.arc(bomb.x * 50 + 25, bomb.y * 50 + 25, 25, 0, 2 * Math.PI);
 		ctx.fill();
+
+		ctx.font = "25px serif";
+		ctx.fillStyle = "black";
+		ctx.fillText(time, bomb.x * 50 + 20, bomb.y * 50 + 35);
 	}
+}
+
+function drawExplosion(){
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
+
 }

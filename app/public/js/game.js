@@ -4,10 +4,12 @@ export const game = {
 	board_size : {x: 17, y: 11},
 
 	players : {
-		scali : {x: 0, y: 0, speed: 1, status: 'idle', dir: 'right'}
+		scali : {x: 0, y: 0, speed: 1, max: 3, power: 1, status: 'idle', dir: 'right'}
 	},
 
 	bombs : [],
+
+	explosions : [],
 
 	generateEmptyBoard : function(){
 		this.board = initializeBiArray(this.board, 11);
@@ -29,14 +31,11 @@ export const game = {
 				}
 			}
 		}
-	}
-}
+	},
 
-function initializeBiArray(arr, lines){
-	for(let i = 0; i < lines; i++){
-		arr[i] = [];
+	startBombTimer : function(){
+		setInterval(bombTimer, 100);
 	}
-	return arr;
 }
 
 export function makeAnAction(command){
@@ -45,6 +44,91 @@ export function makeAnAction(command){
 	if(action){
 		action(command.player);
 	}
+}
+
+function bombTimer(){
+	for(let index in game.bombs){
+		let bomb = game.bombs[index];
+
+		if(bomb.time > 0){
+			bomb.time -= 100;
+		} else {
+			explode(index);
+		}
+	}
+}
+
+function explode(index){
+	console.log("nuke");
+	var bomb = game.bombs[index];
+
+	game.bombs.splice(index, 1);
+
+	var explosion = {
+		power : bomb.power,
+		center : {x : bomb.x, y : bomb.y},
+		user : bomb.user,
+		time : 0
+	}
+
+	explosion.ranges = calculateExplosionRange(explosion);
+	game.explosions.push(explosion);
+}
+
+function calculateExplosionRange(explosion){
+	let ranges = [];
+	ranges.push(explosion.center);
+
+	//right
+	for(let i = 1; i <= explosion.power; i++){
+		let next = {x: explosion.center.x + i, y: explosion.center.y};
+		if(checkExplosionRange(next)){
+			ranges.push(next);
+		}
+	}
+	//left
+	for(let i = 1; i <= explosion.power; i++){
+		let next = {x: explosion.center.x - i, y: explosion.center.y};
+		if(checkExplosionRange(next)){
+			ranges.push(next);
+		}
+	}
+	//down
+	for(let i = 1; i <= explosion.power; i++){
+		let next = {x: explosion.center.x, y: explosion.center.y + 1};
+		if(checkExplosionRange(next)){
+			ranges.push(next);
+		}
+	}
+	//up
+	for(let i = 1; i <= explosion.power; i++){
+		let next = {x: explosion.center.x, y: explosion.center.y - 1};
+		if(checkExplosionRange(next)){
+			ranges.push(next);
+		}
+	}
+
+	return ranges;
+}
+
+function checkExplosionRange(next){
+	if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
+		return false;
+	}
+
+	if(game.board[next.y][next.x] == 1){
+		return false;
+	}
+
+	return true;
+
+}
+
+function initializeBiArray(arr, lines){
+	for(let i = 0; i < lines; i++){
+		arr[i] = [];
+	}
+	return arr;
 }
 
 const player_actions = {
@@ -119,6 +203,10 @@ const player_actions = {
 	" " : function(playerId){		
 		let player = game.players[playerId];
 
+		if(checkBombs(playerId) >= player.max){
+			return;
+		}
+
 		//check if the spot can have a bomb
 		if(game.board[player.y][player.x] == 0){
 			let date = new Date();
@@ -127,11 +215,25 @@ const player_actions = {
 				user : playerId,
 				x : player.x,
 				y : player.y,
-				time : 3
+				time : 3000,
+				range : player.power
 			}
 			game.bombs.push(bomb);
 		}
 	}
+}
+
+function checkBombs(playerId){
+	let n_bombs = 0;
+
+	for(let index in game.bombs){
+		let bomb = game.bombs[index];
+		if(bomb.user == playerId){
+			n_bombs++;
+		}
+	}
+
+	return n_bombs;
 }
 
 function checkDestination(destination){

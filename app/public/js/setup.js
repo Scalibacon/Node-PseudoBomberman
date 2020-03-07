@@ -16,10 +16,14 @@ function renderCanvas(){
 	//set game observer
 	keyboardListener.subscribe(makeAnAction);
 
-	//generate default board
+	//generate empty board
 	//game.generateEmptyBoard();
 
+	//generate default board
 	game.generateDefaultBoard();
+
+	//start timer of the bombs
+	game.startBombTimer();
 
 	//start drawing
 	startDrawing();
