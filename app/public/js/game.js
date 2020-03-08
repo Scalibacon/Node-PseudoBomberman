@@ -4,7 +4,7 @@ export const game = {
 	board_size : {x: 17, y: 11},
 
 	players : {
-		scali : {x: 0, y: 0, speed: 1, max: 3, power: 1, status: 'idle', dir: 'right'}
+		scali : {x: 0, y: 0, speed: 1, max: 3, power: 2, status: 'idle', dir: 'right'}
 	},
 
 	bombs : [],
@@ -59,7 +59,7 @@ function bombTimer(){
 }
 
 function explode(index){
-	console.log("nuke");
+	console .log("nuke");
 	var bomb = game.bombs[index];
 
 	game.bombs.splice(index, 1);
@@ -73,6 +73,7 @@ function explode(index){
 
 	explosion.ranges = calculateExplosionRange(explosion);
 	game.explosions.push(explosion);
+	console.log(explosion);
 }
 
 function calculateExplosionRange(explosion){
@@ -84,6 +85,8 @@ function calculateExplosionRange(explosion){
 		let next = {x: explosion.center.x + i, y: explosion.center.y};
 		if(checkExplosionRange(next)){
 			ranges.push(next);
+		} else {
+			break;
 		}
 	}
 	//left
@@ -91,20 +94,26 @@ function calculateExplosionRange(explosion){
 		let next = {x: explosion.center.x - i, y: explosion.center.y};
 		if(checkExplosionRange(next)){
 			ranges.push(next);
+		} else {
+			break;
 		}
 	}
 	//down
 	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x, y: explosion.center.y + 1};
+		let next = {x: explosion.center.x, y: explosion.center.y + i};
 		if(checkExplosionRange(next)){
 			ranges.push(next);
+		} else {
+			break;
 		}
 	}
 	//up
 	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x, y: explosion.center.y - 1};
+		let next = {x: explosion.center.x, y: explosion.center.y - i};
 		if(checkExplosionRange(next)){
 			ranges.push(next);
+		} else {
+			break;
 		}
 	}
 
@@ -216,7 +225,7 @@ const player_actions = {
 				x : player.x,
 				y : player.y,
 				time : 3000,
-				range : player.power
+				power : player.power
 			}
 			game.bombs.push(bomb);
 		}

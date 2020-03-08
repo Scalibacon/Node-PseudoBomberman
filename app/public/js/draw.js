@@ -3,6 +3,7 @@ import {game} from './game.js';
 export function startDrawing(){
 	drawBoard();
 	drawBombs();
+	drawExplosion();
 	drawPlayers();
 
 	//console.log(`Draw scali: ${game.players.scali.x}`);
@@ -70,5 +71,16 @@ function drawBombs(){
 function drawExplosion(){
 	let canvas = document.getElementById('game_canvas');
 	let ctx = canvas.getContext('2d');
+
+	for(let index in game.explosions){
+		let explosion = game.explosions[index];
+
+		ctx.fillStyle = "red";
+
+		for(let range_index in explosion.ranges){
+			let range = explosion.ranges[range_index];
+			ctx.fillRect(range.x * 50, range.y * 50, 50, 50);
+		}
+	}
 
 }
