@@ -44,7 +44,11 @@ function drawPlayers(){
 	for(let index in game.players){
 		let player = game.players[index];
 
-		ctx.fillStyle = `orange`;
+		if(player.status != "burning"){
+			ctx.fillStyle = `orange`;
+		} else {
+			ctx.fillStyle = `gray`;
+		}
 		ctx.fillRect(player.x * 50 + 5, player.y * 50 + 5, 40, 40);
 	}
 }

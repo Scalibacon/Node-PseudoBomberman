@@ -33,8 +33,11 @@ export const game = {
 		}
 	},
 
-	startBombTimer : function(){
-		setInterval(bombTimer, 100);
+	startGameUpdate : function(){
+		let time = 100;
+		setInterval(function(){
+			updateGame(time);
+		}, time);
 	}
 }
 
@@ -46,20 +49,66 @@ export function makeAnAction(command){
 	}
 }
 
-function bombTimer(){
+function updateGame(time){
+	bombTimer(time);
+	checkExplosionHit();
+	explosionTimer(time);	
+}
+
+function bombTimer(time){
 	for(let index in game.bombs){
 		let bomb = game.bombs[index];
 
 		if(bomb.time > 0){
-			bomb.time -= 100;
+			bomb.time -= time;
 		} else {
 			explode(index);
 		}
 	}
 }
 
+function explosionTimer(time){
+	for(let index in game.explosions){
+		let explosion = game.explosions[index];
+
+		if(explosion.time > 0){
+			explosion.time -= time;
+		} else {
+			game.explosions.splice(index, 1);
+		}
+	}
+}
+
+function checkExplosionHit(){
+	for(let index in game.explosions){
+		let explosion = game.explosions[index];
+
+		for(let range_index in explosion.ranges){
+			let range = explosion.ranges[range_index];
+
+			//bomb
+			for(let bomb_index in game.bombs){
+				let bomb = game.bombs[bomb_index];
+				if(bomb.x == range.x && bomb.y == range.y){
+					explode(bomb_index);
+				}
+			}
+
+			//player
+			for(let player_index in game.players){
+				let player = game.players[player_index];
+				if(player.x == range.x && player.y == range.y){
+					if(player.status != "burning"){
+						player.status = "burning";
+						console.log(`${player_index} was burned :O`);
+					}
+				}
+			}
+		}
+	}
+}
+
 function explode(index){
-	console .log("nuke");
 	var bomb = game.bombs[index];
 
 	game.bombs.splice(index, 1);
@@ -68,54 +117,30 @@ function explode(index){
 		power : bomb.power,
 		center : {x : bomb.x, y : bomb.y},
 		user : bomb.user,
-		time : 0
+		time : 1500
 	}
 
 	explosion.ranges = calculateExplosionRange(explosion);
 	game.explosions.push(explosion);
-	console.log(explosion);
 }
 
 function calculateExplosionRange(explosion){
+	let factorX = [1, -1, 0, 0];
+	let factorY = [0, 0, 1, -1];
+
 	let ranges = [];
 	ranges.push(explosion.center);
 
-	//right
-	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x + i, y: explosion.center.y};
-		if(checkExplosionRange(next)){
-			ranges.push(next);
-		} else {
-			break;
+	for(let factor = 0; factor < 4; factor++){
+		for(let i = 1; i <= explosion.power; i++){
+			let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
+			if(checkExplosionRange(next)){
+				ranges.push(next);
+			} else {
+				break;
+			}
 		}
-	}
-	//left
-	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x - i, y: explosion.center.y};
-		if(checkExplosionRange(next)){
-			ranges.push(next);
-		} else {
-			break;
-		}
-	}
-	//down
-	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x, y: explosion.center.y + i};
-		if(checkExplosionRange(next)){
-			ranges.push(next);
-		} else {
-			break;
-		}
-	}
-	//up
-	for(let i = 1; i <= explosion.power; i++){
-		let next = {x: explosion.center.x, y: explosion.center.y - i};
-		if(checkExplosionRange(next)){
-			ranges.push(next);
-		} else {
-			break;
-		}
-	}
+	}	
 
 	return ranges;
 }

@@ -23,7 +23,7 @@ function renderCanvas(){
 	game.generateDefaultBoard();
 
 	//start timer of the bombs
-	game.startBombTimer();
+	game.startGameUpdate();
 
 	//start drawing
 	startDrawing();
