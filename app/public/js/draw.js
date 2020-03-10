@@ -21,7 +21,7 @@ function drawBoard(){
 
 			ctx.fillStyle = `rgba(60,240,180,1)`;
 
-			//obsidian
+			//steel
 			if(game.board[i][j].obj == 'steel'){
 				ctx.fillStyle = `rgba(50,0,50,1)`;
 			}

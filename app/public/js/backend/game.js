@@ -307,8 +307,8 @@ function checkDestination(destination){
 		return false;
 	}
 
-	//obsidian
-	if(game.board[destination.y][destination.x].obj == 1){
+	//steel
+	if(game.board[destination.y][destination.x].obj == "steel"){
 		return false;
 	} 
 
@@ -332,7 +332,9 @@ function updatePosition(player, after){
 	setTimeout(function(){
 		after();
 		setTimeout(function(){
-			player.status = "idle"; 
+			if(player.status != "burning"){
+				player.status = "idle"; 
+			}
 		}, delay);
 	}, delay);
 }
