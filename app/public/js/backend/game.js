@@ -11,24 +11,35 @@ export const game = {
 
 	explosions : [],
 
-	generateEmptyBoard : function(){
-		this.board = initializeBiArray(this.board, 11);
-		for(let i = 0; i < 11; i++){
-			for(let j = 0; j < 17; j++){
-				this.board[i][j] = 0;
-			}
-		}
-	},
-
 	generateDefaultBoard : function(){
 		this.board = initializeBiArray(this.board, 11);
 		for(let i = 0; i < 11; i++){
 			for(let j = 0; j < 17; j++){
-				if((j + 1) % 2 == 0 && (i + 1) % 2 == 0){
-					this.board[i][j] = 1;
-				} else {
-					this.board[i][j] = 0;
+				this.board[i][j] = {
+					obj : 'empty',
+					bomb : null
 				}
+
+				if((j + 1) % 2 == 0 && (i + 1) % 2 == 0){
+					this.board[i][j].obj = 'steel';
+				}
+			}
+		}
+	},
+
+	generateRandomBlocks : function(){
+		for(let i = 0; i < 11; i++){
+			for(let j = 0; j < 17; j++){
+				
+				/* Não pode ter bloco em: 
+				0 0    0 16
+				0 1    1 16
+				1 0    0 15
+ 
+				9 0    16 9
+				9 1	   16 10
+				8 0    15 10
+				*/
 			}
 		}
 	},
@@ -41,18 +52,33 @@ export const game = {
 	}
 }
 
-export function makeAnAction(command){
-	let action = player_actions[command.keyPressed];
-
-	if(action){
-		action(command.player);
+function initializeBiArray(arr, lines){
+	for(let i = 0; i < lines; i++){
+		arr[i] = [];
 	}
+	return arr;
 }
 
 function updateGame(time){
 	bombTimer(time);
 	checkExplosionHit();
+	checkPlayerTouch();
 	explosionTimer(time);	
+}
+
+function checkPlayerTouch(){
+	for(let playerId in game.players){
+		let player = game.players[playerId];	
+
+		let board_slot = game.board[player.y][player.x];
+
+		if(board_slot.obj == 'explosion'){
+			if(player.status != "burning"){
+				player.status = "burning";
+				console.log(`${playerId} was burned :O`);
+			}
+		}
+	}
 }
 
 function bombTimer(time){
@@ -62,7 +88,7 @@ function bombTimer(time){
 		if(bomb.time > 0){
 			bomb.time -= time;
 		} else {
-			explode(index);
+			explode(bomb);
 		}
 	}
 }
@@ -74,9 +100,18 @@ function explosionTimer(time){
 		if(explosion.time > 0){
 			explosion.time -= time;
 		} else {
-			game.explosions.splice(index, 1);
+			removeExplosion(explosion);
 		}
 	}
+}
+
+function removeExplosion(explosion){
+	const index = game.explosions.indexOf(explosion);
+	game.explosions.splice(index, 1);
+
+	for(let i = 0; i < explosion.ranges.length; i++){
+		game.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
+	}	
 }
 
 function checkExplosionHit(){
@@ -86,32 +121,17 @@ function checkExplosionHit(){
 		for(let range_index in explosion.ranges){
 			let range = explosion.ranges[range_index];
 
-			//bomb
-			for(let bomb_index in game.bombs){
-				let bomb = game.bombs[bomb_index];
-				if(bomb.x == range.x && bomb.y == range.y){
-					explode(bomb_index);
-				}
-			}
+			let board_slot = game.board[range.y][range.x];
 
-			//player
-			for(let player_index in game.players){
-				let player = game.players[player_index];
-				if(player.x == range.x && player.y == range.y){
-					if(player.status != "burning"){
-						player.status = "burning";
-						console.log(`${player_index} was burned :O`);
-					}
-				}
+			if(board_slot.bomb){
+				explode(board_slot.bomb);
 			}
 		}
 	}
 }
 
-function explode(index){
-	var bomb = game.bombs[index];
-
-	game.bombs.splice(index, 1);
+function explode(bomb){
+	removeBomb(bomb);
 
 	var explosion = {
 		power : bomb.power,
@@ -122,6 +142,12 @@ function explode(index){
 
 	explosion.ranges = calculateExplosionRange(explosion);
 	game.explosions.push(explosion);
+}
+
+function removeBomb(bomb){
+	const index = game.bombs.indexOf(bomb);
+	game.board[bomb.y][bomb.x].bomb = null;
+	game.bombs.splice(index, 1);
 }
 
 function calculateExplosionRange(explosion){
@@ -136,6 +162,7 @@ function calculateExplosionRange(explosion){
 			let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
 			if(checkExplosionRange(next)){
 				ranges.push(next);
+				game.board[next.y][next.x].obj = 'explosion';
 			} else {
 				break;
 			}
@@ -150,19 +177,12 @@ function checkExplosionRange(next){
 		return false;
 	}
 
-	if(game.board[next.y][next.x] == 1){
+	if(game.board[next.y][next.x].obj == 'steel'){
 		return false;
 	}
 
 	return true;
 
-}
-
-function initializeBiArray(arr, lines){
-	for(let i = 0; i < lines; i++){
-		arr[i] = [];
-	}
-	return arr;
 }
 
 const player_actions = {
@@ -241,10 +261,12 @@ const player_actions = {
 			return;
 		}
 
+		if(game.board[player.y][player.x].bomb){
+			return;
+		}
+
 		//check if the spot can have a bomb
-		if(game.board[player.y][player.x] == 0){
-			let date = new Date();
-			let time = date.getTime();
+		if(game.board[player.y][player.x].obj != 'depoistrocaisso'){
 			let bomb = {
 				user : playerId,
 				x : player.x,
@@ -253,7 +275,16 @@ const player_actions = {
 				power : player.power
 			}
 			game.bombs.push(bomb);
+			game.board[bomb.y][bomb.x].bomb = bomb;
 		}
+	}
+}
+
+export function makeAnAction(command){
+	let action = player_actions[command.keyPressed];
+
+	if(action){
+		action(command.player);
 	}
 }
 
@@ -277,17 +308,14 @@ function checkDestination(destination){
 	}
 
 	//obsidian
-	if(game.board[destination.y][destination.x] == 1){
+	if(game.board[destination.y][destination.x].obj == 1){
 		return false;
 	} 
 
 	//bombs
-	for(let index in game.bombs){
-		let bomb = game.bombs[index];
-		if(bomb.x == destination.x && bomb.y == destination.y){
-			return false;
-		}
-	}
+	if(game.board[destination.y][destination.x].bomb){
+		return false;
+	} 
 
 	return true;
 }

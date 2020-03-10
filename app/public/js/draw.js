@@ -1,4 +1,4 @@
-import {game} from './game.js';
+import {game} from './backend/game.js';
 
 export function startDrawing(){
 	drawBoard();
@@ -18,17 +18,11 @@ function drawBoard(){
 
 	for(let i = 0; i < game.board_size.y; i++){
 		for(let j = 0; j < game.board_size.x; j++){
-			/* Epilepsia simulator xD
-			ctx.fillStyle = `rgba(${Math.floor(Math.random() * 254 + 1)}, ${Math.floor(Math.random() * 254 + 1)}, ${Math.floor(Math.random() * 254 + 1)}, 1)`;
-			ctx.fillRect(j * 20, i * 20, 20, 20);
-			*/
 
-			//empty
-			if(game.board[i][j] == 0){
-				ctx.fillStyle = `rgba(60,240,180,1)`;
-			}
+			ctx.fillStyle = `rgba(60,240,180,1)`;
+
 			//obsidian
-			if(game.board[i][j] == 1){
+			if(game.board[i][j].obj == 'steel'){
 				ctx.fillStyle = `rgba(50,0,50,1)`;
 			}
 

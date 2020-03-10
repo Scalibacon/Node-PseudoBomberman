@@ -1,6 +1,6 @@
 import {startDrawing} from './draw.js';
 import {createKeyboardListener} from './input.js';
-import {makeAnAction, game} from './game.js';
+import {makeAnAction, game} from './backend/game.js';
 
 function renderCanvas(){
 	//generate canvas
@@ -15,9 +15,6 @@ function renderCanvas(){
 
 	//set game observer
 	keyboardListener.subscribe(makeAnAction);
-
-	//generate empty board
-	//game.generateEmptyBoard();
 
 	//generate default board
 	game.generateDefaultBoard();
