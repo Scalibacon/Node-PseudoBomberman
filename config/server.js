@@ -9,6 +9,7 @@ app.set('view engine', 'ejs')
 
 consign()
 	.include('app/routes')
+	.then('app/controllers')
 	.into(app)
 
 module.exports = app;

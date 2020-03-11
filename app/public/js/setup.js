@@ -1,8 +1,11 @@
 import {startDrawing} from './draw.js';
 import {createKeyboardListener} from './input.js';
 import {makeAnAction, game} from './backend/game.js';
+import {connectToGameSocket} from './connection.js';
 
 function renderCanvas(){
+	connectToGameSocket();
+
 	//generate canvas
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'game_canvas');
