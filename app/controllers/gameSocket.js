@@ -1,3 +1,5 @@
+let gameCreator = require('../../app/models/game');
+
 module.exports.getSocket = function(server){
 
 	let io = require('socket.io').listen(server);
@@ -5,9 +7,11 @@ module.exports.getSocket = function(server){
 	io.on('connection', function(socket){
 
 		console.log("Alguém connectou");
-		console.log(socket);
+		let game = gameCreator.createGame();
+		game.startGameUpdate();
+		console.log(game);
 
-	})
+	});
 
 	return io;
 }

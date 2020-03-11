@@ -57,7 +57,7 @@ export const game = {
 
 				if(i == 16){
 					if(j == 9 || j == 10){
-
+						continue;
 					}
 				} else
 
