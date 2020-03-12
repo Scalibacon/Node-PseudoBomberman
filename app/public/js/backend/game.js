@@ -25,21 +25,50 @@ export const game = {
 				}
 			}
 		}
+
+		this.generateRandomBlocks();
 	},
 
 	generateRandomBlocks : function(){
 		for(let i = 0; i < 11; i++){
 			for(let j = 0; j < 17; j++){
-				
-				/* Não pode ter bloco em: 
-				0 0    0 16
-				0 1    1 16
-				1 0    0 15
- 
-				9 0    16 9
-				9 1	   16 10
-				8 0    15 10
-				*/
+
+				if(game.board[i][j].obj == "steel"){
+					continue;
+				} else
+
+				if(i == 0){
+					if(j == 0 || j == 1 || j == 15){
+						continue;
+					}
+				} else
+
+				if(i == 1){
+					if(j == 0 || j == 16){
+						continue;
+					}
+				} else
+
+				if(i == 9){
+					if(j == 0 || j == 1){
+						continue;
+					}
+				} else
+
+				if(i == 16){
+					if(j == 9 || j == 10){
+
+					}
+				} else
+
+				if(i == 8 && j == 0 || i == 15 && j == 10){
+					continue;
+				}			
+
+				let random = Math.floor(Math.random() * 100);
+				if(random >= 50){
+					game.board[i][j].obj = "block";
+				}
 			}
 		}
 	},
@@ -160,9 +189,14 @@ function calculateExplosionRange(explosion){
 	for(let factor = 0; factor < 4; factor++){
 		for(let i = 1; i <= explosion.power; i++){
 			let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
-			if(checkExplosionRange(next)){
+
+			let ret = checkExplosionRange(next);
+			if(ret.canExplode){
 				ranges.push(next);
 				game.board[next.y][next.x].obj = 'explosion';
+				if(ret.stop){
+					break;
+				}
 			} else {
 				break;
 			}
@@ -173,15 +207,32 @@ function calculateExplosionRange(explosion){
 }
 
 function checkExplosionRange(next){
+	var ret = {
+		canExplode : false, 
+		stop : true
+	};
+
 	if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
-		return false;
+		return ret;
 	}
 
 	if(game.board[next.y][next.x].obj == 'steel'){
-		return false;
+		return ret;
 	}
 
-	return true;
+	if(game.board[next.y][next.x].obj == 'explosion'){
+		return ret;
+	}
+
+	if(game.board[next.y][next.x].obj == 'block'){
+		ret.canExplode = true;
+		return ret;
+	}
+
+	ret.canExplode = true;
+	ret.stop = false;
+
+	return ret;
 
 }
 
@@ -309,6 +360,11 @@ function checkDestination(destination){
 
 	//steel
 	if(game.board[destination.y][destination.x].obj == "steel"){
+		return false;
+	} 
+
+	//block
+	if(game.board[destination.y][destination.x].obj == "block"){
 		return false;
 	} 
 

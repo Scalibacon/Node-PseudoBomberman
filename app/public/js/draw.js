@@ -26,6 +26,11 @@ function drawBoard(){
 				ctx.fillStyle = `rgba(50,0,50,1)`;
 			}
 
+			//block
+			if(game.board[i][j].obj == 'block'){
+				ctx.fillStyle = `brown`;
+			}
+
 			ctx.fillRect(j * 50, i * 50, 50, 50);
 		}
 	}
