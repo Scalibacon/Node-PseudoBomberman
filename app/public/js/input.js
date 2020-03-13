@@ -1,4 +1,4 @@
-let holdingKey = [];
+let holdingKey = {};
 
 export function createKeyboardListener(){
 	var state = {
@@ -25,13 +25,26 @@ export function createKeyboardListener(){
 	document.addEventListener('keydown', handleKeyDown);
 
 	function handleKeyDown(event){
-		//console.log(`Você pressionou ${event.key}`);
-		var command = {
-			keyPressed : event.key
-		}
-
-		notifyAll(command);
+		holdingKey[event.keyCode] = event;
 	}
+
+	document.addEventListener('keyup', handleKeyUp);
+
+	function handleKeyUp(event){
+		delete holdingKey[event.keyCode];
+	}
+
+	function checkHoldingKeys(){
+		Object.keys(holdingKey).forEach(function(key, index){
+			//console.log(`Você pressionou ${holdingKey[key].key}`);
+			var command = {
+				keyPressed : holdingKey[key].key
+			}
+			notifyAll(command);
+		});
+	}
+
+	setInterval(checkHoldingKeys, 20);
 
 	return {
 		subscribe,
