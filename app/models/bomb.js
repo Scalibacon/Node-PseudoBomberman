@@ -1,3 +1,5 @@
+let blockModel = require('../../app/models/block');
+
 let state = {};
 
 module.exports.setState = function(stt){
@@ -124,33 +126,38 @@ function calculateExplosionRange(explosion){
 }
 
 function checkExplosionRange(next){
-	var ret = {
+	var result = {
 		canExplode : false, 
 		stop : true
 	};
 
 	if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
-		return ret;
+		return result;
+	}
+
+	if(state.board[next.y][next.x].bomb){
+		result.canExplode = true;
+		return result;
 	}
 
 	if(state.board[next.y][next.x].obj == 'steel'){
-		return ret;
+		return result;
 	}
 
 	if(state.board[next.y][next.x].obj == 'explosion'){
-		ret.stop = false;
-		return ret;
+		result.stop = false;
+		return result;
 	}
 
 	if(state.board[next.y][next.x].obj == 'block'){
-		ret.canExplode = true;
-		return ret;
+		blockModel.turnToAsh(next.x, next.y);
+		return result;
 	}
 
-	ret.canExplode = true;
-	ret.stop = false;
+	result.canExplode = true;
+	result.stop = false;
 
-	return ret;
+	return result;
 }
 
 module.exports.checkExplosionHit = function(){

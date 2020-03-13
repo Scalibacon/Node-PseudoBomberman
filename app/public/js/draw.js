@@ -38,6 +38,16 @@ function drawBoard(){
 				ctx.fillStyle = `brown`;
 			}
 
+			//ashe
+			if(game.board[i][j].obj == 'ashe'){
+				ctx.fillStyle = `rgba(255, 255, 102, 1)`;
+			}
+
+			//item
+			if(game.board[i][j].obj == 'item'){
+				ctx.fillStyle = `rgba(255, 51, 153, 1)`;
+			}
+
 			ctx.fillRect(j * 50, i * 50, 50, 50);
 		}
 	}
