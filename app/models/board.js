@@ -31,7 +31,7 @@ function generateRandomBlocks(board){
 			} else
 
 			if(i == 0){
-				if(j == 0 || j == 1 || j == 15){
+				if(j == 0 || j == 1 || j == 15 || j == 16){
 					continue;
 				}
 			} else
@@ -43,19 +43,15 @@ function generateRandomBlocks(board){
 			} else
 
 			if(i == 9){
-				if(j == 0 || j == 1){
+				if(j == 0 || j == 16){
 					continue;
 				}
 			} else
 
-			if(i == 16){
-				if(j == 9 || j == 10){
+			if(i == 10){
+				if(j == 0 || j == 1 || j == 15 || j == 16){
 					continue;
 				}
-			} else
-
-			if(i == 8 && j == 0 || i == 15 && j == 10){
-				continue;
 			}			
 
 			let random = Math.floor(Math.random() * 100);

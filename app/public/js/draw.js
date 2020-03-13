@@ -1,14 +1,20 @@
-import {game} from './backend/game.js';
+//import {game} from './backend/game.js';
+
+let game = null;
 
 export function startDrawing(){
-	drawBoard();
-	drawBombs();
-	drawExplosion();
-	drawPlayers();
-
-	//console.log(`Draw scali: ${game.players.scali.x}`);
+	if(game != null){
+		drawBoard();
+		drawBombs();
+		drawExplosion();
+		drawPlayers();
+	}
 
 	requestAnimationFrame(startDrawing);
+}
+
+export function updateGameState(state){
+	game = state;
 }
 
 function drawBoard(){
@@ -16,8 +22,8 @@ function drawBoard(){
 	let canvas = document.getElementById('game_canvas');
 	let ctx = canvas.getContext('2d');
 
-	for(let i = 0; i < game.board_size.y; i++){
-		for(let j = 0; j < game.board_size.x; j++){
+	for(let i = 0; i < 11; i++){
+		for(let j = 0; j < 17; j++){
 
 			ctx.fillStyle = `rgba(60,240,180,1)`;
 

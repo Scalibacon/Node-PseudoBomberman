@@ -1,11 +1,8 @@
 import {startDrawing} from './draw.js';
 import {createKeyboardListener} from './input.js';
-import {makeAnAction, game} from './backend/game.js';
-import {connectToGameSocket} from './connection.js';
+import {connectToGameSocket, sendCommand} from './connection.js';
 
 function renderCanvas(){
-	connectToGameSocket();
-
 	//generate canvas
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'game_canvas');
@@ -16,16 +13,13 @@ function renderCanvas(){
 	//keyboard starts to listen
 	const keyboardListener = createKeyboardListener();
 
-	//set game observer
-	keyboardListener.subscribe(makeAnAction);
+	//subscribes connection's sendCommand to keyboard
+	keyboardListener.subscribe(sendCommand);
+	
+	//exactly what the name means
+	connectToGameSocket();
 
-	//generate default board
-	game.generateDefaultBoard();
-
-	//start timer of the bombs
-	game.startGameUpdate();
-
-	//start drawing
+	//start drawing game state to canvas
 	startDrawing();
 }
 

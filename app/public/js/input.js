@@ -1,3 +1,5 @@
+let holdingKey = [];
+
 export function createKeyboardListener(){
 	var state = {
 		observers : []
@@ -25,9 +27,9 @@ export function createKeyboardListener(){
 	function handleKeyDown(event){
 		//console.log(`Você pressionou ${event.key}`);
 		var command = {
-			player : "scali",
 			keyPressed : event.key
 		}
+
 		notifyAll(command);
 	}
 
