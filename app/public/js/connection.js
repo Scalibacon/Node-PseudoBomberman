@@ -14,3 +14,5 @@ export function sendCommand(command){
 	command.player = socket.id;
 	socket.emit('sendCommand', command);
 }
+
+export {socket};

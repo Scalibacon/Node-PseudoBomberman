@@ -1,4 +1,5 @@
 //import {game} from './backend/game.js';
+import {socket} from './connection.js';
 
 let game = null;
 
@@ -50,10 +51,15 @@ function drawPlayers(){
 		let player = game.players[index];
 
 		if(player.status != "burning"){
-			ctx.fillStyle = `orange`;
+			if(player.id == socket.id){
+				ctx.fillStyle = 'rgba(0,153,255,1)';
+			} else {
+				ctx.fillStyle = `orange`;
+			}
 		} else {
 			ctx.fillStyle = `gray`;
 		}
+
 		ctx.fillRect(player.x * 50 + 5, player.y * 50 + 5, 40, 40);
 	}
 }
