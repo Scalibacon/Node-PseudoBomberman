@@ -1,177 +1,186 @@
-let blockModel = require('../../app/models/block');
+let blockModel = require('../../app/models/block')();
 
 let state = {};
 
-module.exports.setState = function(stt){
-	state = stt;
-}
+function BombModel(state){
+	this.state = state;
 
-module.exports.bombTimer = function(time){
-	for(let index in state.bombs){
-		let bomb = state.bombs[index];
+	this.setState = function(state){
+		this.state = state;
+		blockModel.setState(state);
+	}
 
-		if(bomb.time > 0){
-			bomb.time -= time;
-		} else {
-			explode(bomb);
+	this.bombTimer = function(time){
+		for(let index in this.state.bombs){
+			let bomb = this.state.bombs[index];
+
+			if(bomb.time > 0){
+				bomb.time -= time;
+			} else {
+				this.explode(bomb);
+			}
 		}
 	}
-}
 
-module.exports.addBomb = function(player){
-	if(checkBombs(player.id) >= player.max){
+	this.addBomb = function(player){
+		if(this.checkBombs(player.id) >= player.max){
 			return;
-	}
-
-	if(state.board[player.y][player.x].bomb){
-		return;
-	}
-
-	//check if the spot can have a bomb
-	if(state.board[player.y][player.x].obj != 'depoistrocaisso'){
-		let bomb = {
-			user : player.id,
-			x : player.x,
-			y : player.y,
-			time : 3000,
-			power : player.power
 		}
-		state.bombs.push(bomb);
-		state.board[bomb.y][bomb.x].bomb = bomb;
-	}
-}
 
-function checkBombs(playerId){
-	let n_bombs = 0;
+		if(this.state.board[player.y][player.x].bomb){
+			return;
+		}
 
-	for(let index in state.bombs){
-		let bomb = state.bombs[index];
-		if(bomb.user == playerId){
-			n_bombs++;
+		//check if the spot can have a bomb
+		if(this.state.board[player.y][player.x].obj != 'depoistrocaisso'){
+			let bomb = {
+				user : player.id,
+				x : player.x,
+				y : player.y,
+				time : 3000,
+				power : player.power
+			}
+			this.state.bombs.push(bomb);
+			this.state.board[bomb.y][bomb.x].bomb = bomb;
 		}
 	}
 
-	return n_bombs;
-}
+	this.checkBombs = function(playerId){
+		let n_bombs = 0;
 
-function removeBomb(bomb){
-	const index = state.bombs.indexOf(bomb);
-	state.board[bomb.y][bomb.x].bomb = null;
-	state.bombs.splice(index, 1);
-}
+		for(let index in this.state.bombs){
+			let bomb = this.state.bombs[index];
+			if(bomb.user == playerId){
+				n_bombs++;
+			}
+		}
 
-/********************** EXPLOSION **********************/
+		return n_bombs;
+	}
 
-module.exports.explosionTimer = function(time){
-	for(let index in state.explosions){
-		let explosion = state.explosions[index];
+	this.removeBomb = function(bomb){
+		const index = this.state.bombs.indexOf(bomb);
+		this.state.board[bomb.y][bomb.x].bomb = null;
+		this.state.bombs.splice(index, 1);
+	}
 
-		if(explosion.time > 0){
-			explosion.time -= time;
-		} else {
-			removeExplosion(explosion);
+	/********************** EXPLOSION **********************/
+
+	this.explosionTimer = function(time){
+		for(let index in this.state.explosions){
+			let explosion = this.state.explosions[index];
+
+			if(explosion.time > 0){
+				explosion.time -= time;
+			} else {
+				this.removeExplosion(explosion);
+			}
 		}
 	}
-}
 
-function removeExplosion(explosion){
-	const index = state.explosions.indexOf(explosion);
-	state.explosions.splice(index, 1);
+	this.removeExplosion = function(explosion){
+		const index = this.state.explosions.indexOf(explosion);
+		this.state.explosions.splice(index, 1);
 
-	for(let i = 0; i < explosion.ranges.length; i++){
-		state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
-	}	
-}
-
-function explode(bomb){
-	removeBomb(bomb);
-
-	var explosion = {
-		power : bomb.power,
-		center : {x : bomb.x, y : bomb.y},
-		user : bomb.user,
-		time : 750
+		for(let i = 0; i < explosion.ranges.length; i++){
+			this.state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
+		}	
 	}
 
-	explosion.ranges = calculateExplosionRange(explosion);
-	state.explosions.push(explosion);
-}
+	this.explode = function(bomb){
+		this.removeBomb(bomb);
 
-function calculateExplosionRange(explosion){
-	let factorX = [1, -1, 0, 0];
-	let factorY = [0, 0, 1, -1];
+		var explosion = {
+			power : bomb.power,
+			center : {x : bomb.x, y : bomb.y},
+			user : bomb.user,
+			time : 750
+		}
 
-	let ranges = [];
+		explosion.ranges = this.calculateExplosionRange(explosion);
+		this.state.explosions.push(explosion);
+	}
 
-	ranges.push(explosion.center);
-	state.board[explosion.center.y][explosion.center.x].obj = 'explosion';
+	this.calculateExplosionRange = function(explosion){
+		let factorX = [1, -1, 0, 0];
+		let factorY = [0, 0, 1, -1];
 
-	for(let factor = 0; factor < 4; factor++){
-		for(let i = 1; i <= explosion.power; i++){
-			let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
-			let ret = checkExplosionRange(next);
-			if(ret.canExplode){
-				ranges.push(next);
-				state.board[next.y][next.x].obj = 'explosion';
-				if(ret.stop){
+		let ranges = [];
+
+		ranges.push(explosion.center);
+		this.state.board[explosion.center.y][explosion.center.x].obj = 'explosion';
+
+		for(let factor = 0; factor < 4; factor++){
+			for(let i = 1; i <= explosion.power; i++){
+				let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
+				let ret = this.checkExplosionRange(next);
+				if(ret.canExplode){
+					ranges.push(next);
+					this.state.board[next.y][next.x].obj = 'explosion';
+					if(ret.stop){
+						break;
+					}
+				} else {
 					break;
 				}
-			} else {
-				break;
 			}
-		}
-	}	
+		}	
 
-	return ranges;
-}
-
-function checkExplosionRange(next){
-	var result = {
-		canExplode : false, 
-		stop : true
-	};
-
-	if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
-		return result;
+		return ranges;
 	}
 
-	if(state.board[next.y][next.x].bomb){
+	this.checkExplosionRange = function(next){
+		var result = {
+			canExplode : false, 
+			stop : true
+		};
+
+		if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
+			return result;
+		}
+
+		if(this.state.board[next.y][next.x].bomb){
+			result.canExplode = true;
+			return result;
+		}
+
+		if(this.state.board[next.y][next.x].obj == 'steel'){
+			return result;
+		}
+
+		if(this.state.board[next.y][next.x].obj == 'explosion'){
+			result.stop = false;
+			return result;
+		}
+
+		if(this.state.board[next.y][next.x].obj == 'block'){
+			blockModel.turnToAsh(next.x, next.y);
+			return result;
+		}
+
 		result.canExplode = true;
-		return result;
-	}
-
-	if(state.board[next.y][next.x].obj == 'steel'){
-		return result;
-	}
-
-	if(state.board[next.y][next.x].obj == 'explosion'){
 		result.stop = false;
+
 		return result;
 	}
 
-	if(state.board[next.y][next.x].obj == 'block'){
-		blockModel.turnToAsh(next.x, next.y);
-		return result;
-	}
+	this.checkExplosionHit = function(){
+		for(let index in this.state.explosions){
+			let explosion = this.state.explosions[index];
 
-	result.canExplode = true;
-	result.stop = false;
+			for(let range_index in explosion.ranges){
+				let range = explosion.ranges[range_index];
 
-	return result;
-}
+				let board_slot = this.state.board[range.y][range.x];
 
-module.exports.checkExplosionHit = function(){
-	for(let index in state.explosions){
-		let explosion = state.explosions[index];
-
-		for(let range_index in explosion.ranges){
-			let range = explosion.ranges[range_index];
-
-			let board_slot = state.board[range.y][range.x];
-
-			if(board_slot.bomb){
-				explode(board_slot.bomb);
+				if(board_slot.bomb){
+					this.explode(board_slot.bomb);
+				}
 			}
 		}
 	}
+}
+
+module.exports = function(state){
+	return new BombModel(state);
 }

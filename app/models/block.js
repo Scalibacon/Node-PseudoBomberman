@@ -1,42 +1,54 @@
-let itemModel = require('../../app/models/item');
-let state = {};
+let itemModel = require('../../app/models/item')();
 
-module.exports.setState = function(stt){
-	state = stt;
-	itemModel.setState(state);
-}
+function BlockModel(state){
+	this.state = state;
 
-module.exports.turnToAsh = function(x, y){
-	spot = state.board[y][x];
-
-	spot.obj = "ashe";
-
-	let ash = {
-		time : 750,
-		x,
-		y
+	this.setState = function(state){
+		this.state = state;
+		itemModel.setState(state);
 	}
 
-	state.ashes.push(ash);
-}
+	this.turnToAsh = function(x, y){
+		spot = this.state.board[y][x];
 
-module.exports.ashTimer = function(time){
-	for(let index in state.ashes){
-		let ash = state.ashes[index];
+		spot.obj = "ash";
 
-		if(ash.time > 0){
-			ash.time -= time;
-		} else {
-			removeAsh(ash)
+		let ash = {
+			time : 750,
+			x,
+			y
+		}
+
+		this.state.ashes.push(ash);
+	}
+
+	this.ashTimer = function(time){
+		for(let index in this.state.ashes){
+			let ash = this.state.ashes[index];
+
+			if(ash.time > 0){
+				ash.time -= time;
+			} else {
+				this.removeAsh(ash)
+			}
 		}
 	}
+
+	this.removeAsh = function(ash){
+		const index = this.state.ashes.indexOf(ash);
+		this.state.ashes.splice(index, 1);
+
+		this.state.board[ash.y][ash.x].obj = 'empty';
+
+		itemModel.dropItem(ash.x, ash.y);
+	}
 }
 
-function removeAsh(ash){
-	const index = state.ashes.indexOf(ash);
-	state.ashes.splice(index, 1);
-
-	state.board[ash.y][ash.x].obj = 'empty';
-
-	itemModel.dropItem(ash.x, ash.y);
+module.exports = function(state){
+	return new BlockModel(state);
 }
+
+
+
+
+

@@ -1,7 +1,7 @@
 let createBoard = require('../../app/models/board');
-let playerModel = require('../../app/models/player');
-let bombModel = require('../../app/models/bomb');
-let blockModel = require('../../app/models/block');
+let playerModel = require('../../app/models/player')();
+let bombModel = require('../../app/models/bomb')();
+let blockModel = require('../../app/models/block')();
 
 module.exports.createGame = function(){
 	return game;
@@ -72,10 +72,8 @@ let game = {
 			return;
 		}	
 
-		let action = playerModel.player_actions[command.keyPressed];
-
-		if(action){
-			action(player);
+		if(playerModel[command.keyPressed]){
+			playerModel[command.keyPressed](player);
 		}
 	}
 }

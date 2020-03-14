@@ -39,7 +39,7 @@ function drawBoard(){
 			}
 
 			//ashe
-			if(game.board[i][j].obj == 'ashe'){
+			if(game.board[i][j].obj == 'ash'){
 				ctx.fillStyle = `rgba(255, 255, 102, 1)`;
 			}
 
