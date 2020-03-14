@@ -1,4 +1,5 @@
 let bombModel = require('../../app/models/bomb')();
+let itemModel = require('../../app/models/item')();
 
 function PlayerModel(state){
 	this.state = state;
@@ -6,6 +7,7 @@ function PlayerModel(state){
 	this.setState = function(state){
 		this.state = state;
 		bombModel.setState(state);
+		itemModel.setState(state);
 	}
 
 	this.createPlayer = function(id, x, y){
@@ -13,9 +15,9 @@ function PlayerModel(state){
 			id : id,
 			x: x, 
 			y: y, 
-			speed: 2, 
-			max: 3, 
-			power: 4, 
+			speed: 1, 
+			max_bombs: 1, 
+			power: 1, 
 			status: 'idle', 
 			dir: 'down'
 		}
@@ -25,14 +27,25 @@ function PlayerModel(state){
 		for(let playerId in this.state.players){
 			let player = this.state.players[playerId];	
 
-			let board_slot = this.state.board[player.y][player.x];
+			let slot = this.state.board[player.y][player.x];
 
-			if(board_slot.obj == 'explosion'){
+			if(slot.obj == 'explosion'){
 				if(player.status != "burning"){
 					player.status = "burning";
 					console.log(`${playerId} was burned :O`);
 				}
 			}
+
+			if(slot.item){
+				this.buff(player, slot.item.type);
+				itemModel.removeItem(slot.item);
+			}
+		}
+	}
+
+	this.buff = function(player, type){
+		if(player[type] < 7){
+			player[type]++;
 		}
 	}
 
@@ -60,7 +73,7 @@ function PlayerModel(state){
 		this.walk(player);
 	}
 
-	this.f = function(player){	
+	this.e = function(player){	
 		bombModel.addBomb(player);		
 	}	
 

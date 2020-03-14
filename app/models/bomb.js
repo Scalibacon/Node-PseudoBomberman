@@ -1,4 +1,5 @@
 let blockModel = require('../../app/models/block')();
+let itemModel = require('../../app/models/item')();
 
 let state = {};
 
@@ -8,6 +9,7 @@ function BombModel(state){
 	this.setState = function(state){
 		this.state = state;
 		blockModel.setState(state);
+		itemModel.setState(state);
 	}
 
 	this.bombTimer = function(time){
@@ -23,7 +25,7 @@ function BombModel(state){
 	}
 
 	this.addBomb = function(player){
-		if(this.checkBombs(player.id) >= player.max){
+		if(this.checkBombs(player.id) >= player.max_bombs){
 			return;
 		}
 
@@ -171,10 +173,14 @@ function BombModel(state){
 			for(let range_index in explosion.ranges){
 				let range = explosion.ranges[range_index];
 
-				let board_slot = this.state.board[range.y][range.x];
+				let slot = this.state.board[range.y][range.x];
 
-				if(board_slot.bomb){
-					this.explode(board_slot.bomb);
+				if(slot.bomb){
+					this.explode(slot.bomb);
+				}
+
+				if(slot.item){
+					itemModel.removeItem(slot.item);
 				}
 			}
 		}

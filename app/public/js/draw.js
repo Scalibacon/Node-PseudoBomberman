@@ -7,6 +7,7 @@ export function startDrawing(){
 	if(game != null){
 		drawBoard();
 		drawBombs();
+		drawItens();
 		drawExplosion();
 		drawPlayers();
 	}
@@ -43,13 +44,35 @@ function drawBoard(){
 				ctx.fillStyle = `rgba(255, 255, 102, 1)`;
 			}
 
-			//item
-			if(game.board[i][j].obj == 'item'){
-				ctx.fillStyle = `rgba(255, 51, 153, 1)`;
-			}
-
 			ctx.fillRect(j * 50, i * 50, 50, 50);
 		}
+	}
+}
+
+function drawItens(){
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
+
+	for(let index in game.itens){
+		let item = game.itens[index];
+
+		ctx.fillStyle = `rgba(208, 237, 245, 1)`;
+		ctx.fillRect(item.x * 50, item.y * 50, 50, 50);
+
+		ctx.beginPath();
+		ctx.lineWidth = "10";
+
+		if(item.type == 'speed'){
+			ctx.strokeStyle = `rgba(153, 236, 247, 1)`;
+		} else 
+		if(item.type == 'max_bombs'){
+			ctx.strokeStyle = `rgba(50, 69, 71, 1)`;
+		} else 
+		if(item.type == 'power'){
+			ctx.strokeStyle = `rgba(255, 148, 8, 1)`;
+		}
+		ctx.rect(item.x * 50 + 5, item.y * 50 + 5, 40, 40);
+		ctx.stroke();
 	}
 }
 
@@ -107,5 +130,4 @@ function drawExplosion(){
 			ctx.fillRect(range.x * 50, range.y * 50, 50, 50);
 		}
 	}
-
 }
