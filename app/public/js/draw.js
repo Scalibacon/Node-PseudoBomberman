@@ -5,6 +5,7 @@ let game = null;
 
 export function startDrawing(){
 	if(game != null){
+		drawScore();
 		drawBoard();
 		drawBombs();
 		drawItens();
@@ -17,6 +18,14 @@ export function startDrawing(){
 
 export function updateGameState(state){
 	game = state;
+}
+
+function drawScore(){
+	let canvas = document.getElementById('game_canvas');
+	let ctx = canvas.getContext('2d');
+	
+	ctx.fillStyle = `rgba(1,1,1,1)`;
+	ctx.fillRect(0, 550, 850, 50);
 }
 
 function drawBoard(){

@@ -7,7 +7,7 @@ function renderCanvas(){
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'game_canvas');
 	canvas.setAttribute('width', 850);
-	canvas.setAttribute('height', 550);
+	canvas.setAttribute('height', 600);
 	document.body.appendChild(canvas);
 
 	//keyboard starts to listen

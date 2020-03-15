@@ -132,7 +132,7 @@ function PlayerModel(state){
 
 		player.status = "walking";
 
-		var delay = 200 / player.speed;
+		var delay = 200 - (player.speed * 20);
 
 		setTimeout(function(){
 			player.x = destination.x;
