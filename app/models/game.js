@@ -16,6 +16,7 @@ let game = {
 		explosions : [],
 		ashes : [],
 		itens : [],
+		time : 0
 	},
 
 	io : null,
@@ -79,6 +80,7 @@ let game = {
 }
 
 function updateGame(time){	
+	game.state.time += time;
 	bombModel.bombTimer(time);
 	bombModel.checkExplosionHit();
 	playerModel.checkPlayerTouch();

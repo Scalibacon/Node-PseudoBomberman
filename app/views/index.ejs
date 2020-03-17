@@ -3,12 +3,30 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="icon" href="img/favicon.ico" type="image/ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="js/setup.js" type="module"></script>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+
+	<script src="js/jquery-3.4.1.min.js"></script>
 </head>
 
 <body>
+	<div id="background"></div>
 	
+	<div id="login-center-container" class="rounded">
+		<div id="login-title">
+			<h2>Digite um nome de jogador</h2>
+		</div>
+		<div id="login-form-container">
+			<form method="POST" action="/entrar" id="form-entrar">
+				<input class='form-control form-control-lg' type='text' name='name' id='name' placeholder='Entre com seu nome de jogador aqui...'>
+				<div class="alert alert-danger" id='error' role="alert">Nome vazio</div>
+				<button type="button" class="btn btn-primary btn-lg" id="btn-entrar">Entrar</button>
+			</form>
+			<img src='img/bomb.png' id='login-bomb'>
+		</div>
+	</div>
+
+	
+	<script src="js/login.js"></script>
 </body>
 </html>
