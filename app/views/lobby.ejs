@@ -12,11 +12,56 @@
 <body>
 	<div id="background"></div>
 
+	<div id="lobby-info-container">
+		<div id="lobby-info-tarolinho"><img src='img/arrow.png' id='tarolinho-arrow'></div>
+		<div id="lobby-info-body">
+			<h5 id='lobby-info-name'>Scalibacon</h5>
+			<div class='lobby-container'>
+				<p class='lobby-info-title'>Habilidades</p>
+				<div class='lobby-info-skill'></div>
+				<div class='lobby-info-skill'></div>
+				<div class='lobby-info-skill'></div>
+				<div class='lobby-info-skill'></div>
+				<div class='lobby-info-skill'></div>
+				<div class='lobby-info-skill'></div>
+			</div>
+			<div class='lobby-container'>
+				<p class='lobby-info-title'>Skins</p>
+				<div class='lobby-info-skin'></div>
+				<div class='lobby-info-skin'></div>
+				<div class='lobby-info-skin'></div>
+			</div>
+		</div>
+	</div>
+
 	<div id="lobby-center-container">
 		<h2>Salas de jogo</h2>
 
-		<div class="room-container"></div>
-		<div class="room-container"></div>
+		<div class="room-container">
+			<h4>Sala 1</h4>
+			<div class='room-players-container'>
+				<div class='room-player'>
+					<img class='room-player-img'>
+					<span class='room-player-name'></span>
+				</div>
+				<div class='room-player'>
+					<img class='room-player-img'>
+					<span class='room-player-name'></span>
+				</div>
+				<div class='room-player'>
+					<img class='room-player-img'>
+					<span class='room-player-name'></span>
+				</div>
+				<div class='room-player'>
+					<img class='room-player-img'>
+					<span class='room-player-name'></span>
+				</div>
+
+			</div>
+			<button type="button" class="btn btn-primary btn-room-enter">Entrar</button>
+		</div>
 	</div>
+
+	<script src="js/lobby.js"></script>
 </body>
 </html>

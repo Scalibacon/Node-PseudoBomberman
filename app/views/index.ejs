@@ -18,14 +18,13 @@
 		</div>
 		<div id="login-form-container">
 			<form method="POST" action="/entrar" id="form-entrar">
-				<input class='form-control form-control-lg' type='text' name='name' id='name' placeholder='Entre com seu nome de jogador aqui...'>
+				<input class='form-control form-control-lg' maxlength='10' type='text' name='name' id='name' placeholder='Entre com seu nome de jogador aqui...'>
 				<div class="alert alert-danger" id='error' role="alert">Nome vazio</div>
 				<button type="button" class="btn btn-primary btn-lg" id="btn-entrar">Entrar</button>
 			</form>
 			<img src='img/bomb.png' id='login-bomb'>
 		</div>
 	</div>
-
 	
 	<script src="js/login.js"></script>
 </body>
