@@ -7,6 +7,8 @@
 	<link rel="stylesheet" type="text/css" href="css/lobby.css">
 
 	<script src="js/jquery-3.4.1.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+
 </head>
 
 <body>
@@ -15,7 +17,8 @@
 	<div id="lobby-info-container">
 		<div id="lobby-info-tarolinho"><img src='img/arrow.png' id='tarolinho-arrow'></div>
 		<div id="lobby-info-body">
-			<h5 id='lobby-info-name'>Scalibacon</h5>
+			<h5 id='lobby-info-name'><%= session.name %></h5>
+			<input type=hidden id='hidden-name' value='<%= session.name %>'>
 			<div class='lobby-container'>
 				<p class='lobby-info-title'>Habilidades</p>
 				<div class='lobby-info-skill'></div>
@@ -34,32 +37,7 @@
 		</div>
 	</div>
 
-	<div id="lobby-center-container">
-		<h2>Salas de jogo</h2>
-
-		<div class="room-container">
-			<h4>Sala 1</h4>
-			<div class='room-players-container'>
-				<div class='room-player'>
-					<img class='room-player-img'>
-					<span class='room-player-name'></span>
-				</div>
-				<div class='room-player'>
-					<img class='room-player-img'>
-					<span class='room-player-name'></span>
-				</div>
-				<div class='room-player'>
-					<img class='room-player-img'>
-					<span class='room-player-name'></span>
-				</div>
-				<div class='room-player'>
-					<img class='room-player-img'>
-					<span class='room-player-name'></span>
-				</div>
-
-			</div>
-			<button type="button" class="btn btn-primary btn-room-enter">Entrar</button>
-		</div>
+	<div id="lobby-center-container">		
 	</div>
 
 	<script src="js/lobby.js"></script>

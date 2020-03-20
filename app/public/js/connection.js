@@ -3,7 +3,7 @@ let socket;
 
 export function connectToGameSocket(){
 	//socket = io("http://localhost");
-	socket = io("http://192.168.1.137"); //localhost
+	socket = io("/game"); //localhost
 
 	socket.on('updateState', function(data){
 		updateGameState(data);

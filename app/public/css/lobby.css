@@ -131,8 +131,7 @@
 .room-player-img{
 	width: 55px;
 	height: 55px;
-	border:solid 1px rgba(200,200,200,0.75);
-	background-color: rgba(240,240,240,1);
+	
 }
 .room-player-name{
 	width:100%;
@@ -142,6 +141,8 @@
 	text-align:center;
 	font-family: sans-serif;
 	margin-top:5px;
+}
+.empty{
 	border:solid 1px rgba(200,200,200,0.75);
 	background-color: rgba(240,240,240,1);
 }

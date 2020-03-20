@@ -1,20 +1,19 @@
 let gameCreator = require('../../app/models/game');
-let io;
 
 let connected = {};
 
-module.exports.getSocket = function(server){
+module.exports.getSocket = function(io){
 
-	io = require('socket.io').listen(server);
+	const gameIO = io.of('/game');
 
-	io.on('connection', function(socket){
+	gameIO.on('connection', function(socket){
 
 		console.log(`${socket.id} conectou`);
 
 		if(connected.game == undefined){
 			console.log("Criando game...")
 			connected.game = gameCreator.createGame();
-			connected.game.setIo(io);
+			connected.game.setIo(gameIO);
 			connected.game.startGame();						
 		}
 
@@ -31,23 +30,3 @@ module.exports.getSocket = function(server){
 
 	return io;
 }
-
-/* ainda não usado
-function getPeerGroup(){
-	for(let index in connected){
-		let group = connected[index];
-		if(group.length < 4){
-			return {
-				index : index
-				position : group.length
-			};
-		}
-		if(index == connected.length){
-			return {
-				index : index + 1,
-				position : 1
-			};
-		}
-	}
-}
-*/
