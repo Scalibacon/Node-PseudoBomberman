@@ -9,45 +9,70 @@ module.exports.getSocket = function(io){
 		broadcastUpdate();
 
 		socket.on('enterRoom', function(data){
-			data.player.socket = socket.id;
-			enterRoom(data);
+			exitRoom(data.player, socket);
+			if(enterRoom(data)){
+				socket.join(data.room);
+			}
+			broadcastUpdate();
+		});
+
+		socket.on('exitRoom', function(data){
+			exitRoom(data.player, socket);
 			broadcastUpdate();
 		});
 
 		socket.on('disconnect', function(data){
-			let player = {socket : socket.id};
-			exitRoom(player);
+			let player = {id : socket.id};
+			exitRoom(player, socket);
 			broadcastUpdate();
-		})
+		});
+
+		socket.on('startGame', function(room){
+			rooms[room].state = 'playing';
+			let data = {
+				room : rooms[room],
+				idRoom : room
+			}
+			lobbyIO.to(room).emit('startGame', data);
+		});
 	});
 
 	return io;
 }
 
 function enterRoom(data){
-	exitRoom(data.player);
-
 	let room = rooms[data.room];
 	let slot = checkRoomSlot(room);
 
 	if(!slot){
-		return;
+		return false;
 	} else {		
-		room['player'+slot] = data.player;
+		room.players[slot] = data.player;
+		return true;
 	}
 }
 
-function exitRoom(player){
-
+function exitRoom(player, socket){
 	for(let room_index in rooms){
 		let room = rooms[room_index];
-		for(let play_index in room){
-			let play = room[play_index];
-			if(play && play.socket === player.socket){
-				room[play_index] = null;
+		for(let play_index in room.players){
+			let play = room.players[play_index];
+			if(play && play.id === player.id){
+				socket.leave(room_index);
+				realocatePlayers(room, play_index);				
 				return;
 			}
 		}
+	}
+}
+
+function realocatePlayers(room, exiting){
+	console.log(room);
+	for(let i = parseInt(exiting); i < 4; i++){
+		let aux = room.players[i + 1];
+		console.log(aux);
+		room.players[i+1] = null;
+		room.players[i] = aux;
 	}
 }
 
@@ -57,7 +82,7 @@ function broadcastUpdate(){
 
 function checkRoomSlot(room){
 	for(let i = 1; i <= 4; i++){
-		if(room['player'+i] == null){
+		if(room.players[i] == null){
 			return i;
 		}
 	}
@@ -72,10 +97,13 @@ function startRooms(){
 
 function resetRoom(room){
 	room = {
-		player1 : null,
-		player2 : null,
-		player3 : null,
-		player4 : null
+		players : {
+			"1" : null,
+			"2" : null,
+			"3" : null,
+			"4" : null
+		},
+		state : 'waiting'
 	}
 
 	return room;
