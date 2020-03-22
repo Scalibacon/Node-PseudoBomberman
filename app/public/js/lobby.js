@@ -33,10 +33,10 @@ function connectToLobby(){
 	socket.on('startGame', function(data){
 		let player = {
 			name : document.getElementById('hidden-name').value,
-			id : socket.id		
+			id : socket.id,
+			room : data.idRoom	
 		};
-
-		localStorage.setItem("room", JSON.stringify(data.idRoom));
+		
 		localStorage.setItem("player", JSON.stringify(player));
 		window.location.href = '/game';
 	})

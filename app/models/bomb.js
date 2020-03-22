@@ -1,15 +1,14 @@
-let blockModel = require('../../app/models/block')();
-let itemModel = require('../../app/models/item')();
-
 let state = {};
 
 function BombModel(state){
+	this.blockModel = require('../../app/models/block')();
+	this.itemModel = require('../../app/models/item')();
 	this.state = state;
 
 	this.setState = function(state){
 		this.state = state;
-		blockModel.setState(state);
-		itemModel.setState(state);
+		this.blockModel.setState(state);
+		this.itemModel.setState(state);
 	}
 
 	this.bombTimer = function(time){
@@ -156,7 +155,7 @@ function BombModel(state){
 		}
 
 		if(this.state.board[next.y][next.x].obj == 'block'){
-			blockModel.turnToAsh(next.x, next.y);
+			this.blockModel.turnToAsh(next.x, next.y);
 			return result;
 		}
 
@@ -180,7 +179,7 @@ function BombModel(state){
 				}
 
 				if(slot.item){
-					itemModel.removeItem(slot.item);
+					this.itemModel.removeItem(slot.item);
 				}
 			}
 		}

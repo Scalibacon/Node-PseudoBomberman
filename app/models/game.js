@@ -1,14 +1,14 @@
-let createBoard = require('../../app/models/board');
-let playerModel = require('../../app/models/player')();
-let bombModel = require('../../app/models/bomb')();
-let blockModel = require('../../app/models/block')();
-
 module.exports.createGame = function(){
-	return game;
+	return new GameModel();
 }
 
-let game = {
-	state : {
+function GameModel(){
+	this.createBoard = require('../../app/models/board');
+	this.playerModel = require('../../app/models/player')();
+	this.bombModel = require('../../app/models/bomb')();
+	this.blockModel = require('../../app/models/block')();
+
+	this.state = {
 		board_size : {x: 17, y: 11},
 		board : [],
 		players : {},
@@ -17,24 +17,28 @@ let game = {
 		ashes : [],
 		itens : [],
 		time : 0
-	},
+	}
 
-	io : null,
+	this.room = null;
 
-	startGame : function(){
-		playerModel.setState(this.state);
-		bombModel.setState(this.state);
-		blockModel.setState(this.state);
+	this.io = null;
 
-		this.state.board = createBoard();
+	this.startGame = function(room){
+		this.playerModel.setState(this.state);
+		this.bombModel.setState(this.state);
+		this.blockModel.setState(this.state);
+
+		this.room = room;
+
+		this.state.board = this.createBoard();
 
 		let time = 50;
-		setInterval(function(){
-			updateGame(time);
-		}, time);		
-	},
+		(function(game){setInterval(function(){
+			game.updateGame(time);
+		}, time);})(this)		
+	}
 
-	addPlayer : function(socketId){
+	this.addPlayer = function(player){
 		let x, y;
 		switch(Object.keys(this.state.players).length){
 			case 0:
@@ -58,38 +62,45 @@ let game = {
 				y = 0;
 		}
 
-		let player = playerModel.createPlayer(socketId, x, y);
+		let game_player = this.playerModel.createPlayer(player, x, y);
 
-		this.state.players[socketId] = player;
-	},
+		this.state.players[player.id] = game_player;
+	}
 
-	setIo : function(io){
+	this.removePlayer = function(id){
+		delete this.state.players[id];
+	}
+
+	this.setIo = function(io){
 		this.io = io;
-	},
+	}
 
-	makeAnAction : function(command){
-		let player = this.state.players[command.player];
+	this.makeAnAction = function(command){
+		let player = this.state.players[command.player.id];
 		if(player == null || player == undefined){
 			return;
 		}	
 
-		if(playerModel[command.keyPressed]){
-			playerModel[command.keyPressed](player);
+		if(this.playerModel[command.keyPressed]){
+			this.playerModel[command.keyPressed](player);
 		}
+	}
+
+	this.updateGame = function(time){	
+		this.state.time += time;
+		this.bombModel.bombTimer(time);
+		this.bombModel.checkExplosionHit();
+		this.playerModel.checkPlayerTouch();
+		this.bombModel.explosionTimer(time);
+		this.blockModel.ashTimer(time);
+
+		this.updateClientState(this.state);	
+	}
+
+	this.updateClientState = function(state){
+		this.io.to(this.room).emit('updateState', state);
 	}
 }
 
-function updateGame(time){	
-	game.state.time += time;
-	bombModel.bombTimer(time);
-	bombModel.checkExplosionHit();
-	playerModel.checkPlayerTouch();
-	bombModel.explosionTimer(time);
-	blockModel.ashTimer(time);
 
-	updateClientState(game.state);	
-}
 
-function updateClientState(state){
-	game.io.emit('updateState', state);
-}

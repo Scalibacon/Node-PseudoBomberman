@@ -2,6 +2,8 @@ let rooms = [];
 let lobbyIO;
 
 module.exports.getSocket = function(io){
+	startRooms();
+	
 	lobbyIO = io.of('/lobby');
 
 	lobbyIO.on('connection', function(socket){
@@ -67,10 +69,8 @@ function exitRoom(player, socket){
 }
 
 function realocatePlayers(room, exiting){
-	console.log(room);
 	for(let i = parseInt(exiting); i < 4; i++){
 		let aux = room.players[i + 1];
-		console.log(aux);
 		room.players[i+1] = null;
 		room.players[i] = aux;
 	}
@@ -108,5 +108,3 @@ function resetRoom(room){
 
 	return room;
 }
-
-startRooms();

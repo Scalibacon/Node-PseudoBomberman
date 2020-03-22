@@ -1,18 +1,18 @@
-let bombModel = require('../../app/models/bomb')();
-let itemModel = require('../../app/models/item')();
-
 function PlayerModel(state){
+	this.bombModel = require('../../app/models/bomb')();
+	this.itemModel = require('../../app/models/item')();
 	this.state = state;
 
 	this.setState = function(state){
 		this.state = state;
-		bombModel.setState(state);
-		itemModel.setState(state);
+		this.bombModel.setState(state);
+		this.itemModel.setState(state);
 	}
 
-	this.createPlayer = function(id, x, y){
+	this.createPlayer = function(player, x, y){
 		return {
-			id : id,
+			id : player.id,
+			name : player.name,
 			x: x, 
 			y: y, 
 			speed: 1, 
@@ -38,7 +38,7 @@ function PlayerModel(state){
 
 			if(slot.item){
 				this.buff(player, slot.item.type);
-				itemModel.removeItem(slot.item);
+				this.itemModel.removeItem(slot.item);
 			}
 		}
 	}
@@ -74,7 +74,7 @@ function PlayerModel(state){
 	}
 
 	this.e = function(player){	
-		bombModel.addBomb(player);		
+		this.bombModel.addBomb(player);		
 	}	
 
 	this.walk = function(player){

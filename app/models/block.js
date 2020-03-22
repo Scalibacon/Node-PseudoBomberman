@@ -1,11 +1,10 @@
-let itemModel = require('../../app/models/item')();
-
 function BlockModel(state){
+	this.itemModel = require('../../app/models/item')();
 	this.state = state;
 
 	this.setState = function(state){
 		this.state = state;
-		itemModel.setState(state);
+		this.itemModel.setState(state);
 	}
 
 	this.turnToAsh = function(x, y){
@@ -40,7 +39,7 @@ function BlockModel(state){
 
 		this.state.board[ash.y][ash.x].obj = 'empty';
 
-		itemModel.dropItem(ash.x, ash.y);
+		this.itemModel.dropItem(ash.x, ash.y);
 	}
 }
 
