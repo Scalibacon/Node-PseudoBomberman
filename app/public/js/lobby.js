@@ -31,11 +31,8 @@ function connectToLobby(){
 	});
 
 	socket.on('startGame', function(data){
-		let player = {
-			name : document.getElementById('hidden-name').value,
-			id : socket.id,
-			room : data.idRoom	
-		};
+		let player = JSON.parse(localStorage.getItem('player'));
+		player.room = data.idRoom;
 		
 		localStorage.setItem("player", JSON.stringify(player));
 		window.location.href = '/game';
@@ -73,6 +70,9 @@ function updateLobby(rooms){
 
 		html += 	'</div>';
 
+		if(room.state == 'playing'){
+			html +=		'<button type="button" id="' + prop + '" class="btn btn-danger btn-room-exit">Em curso</button>';
+		} else 
 		if(position > 0){
 			html +=		'<button type="button" id="' + prop + '" class="btn btn-danger btn-room-exit">Sair</button>';
 			if(position == 1){
@@ -112,11 +112,21 @@ function updateLobby(rooms){
 }
 
 function enterRoom(room){
-	let name = document.getElementById('hidden-name').value;
+	let name = document.getElementById('hidden-name').value;	
+	let date = new Date();
+	let time = date.getTime();
+
+	let player = {
+		name : name,
+		id : socket.id, 
+		unikey : time
+	}
+
+	localStorage.setItem("player", JSON.stringify(player));
 
 	let data = {
 		room, 
-		player : {name : name, id : socket.id}
+		player
 	}
 
 	socket.emit('enterRoom', data)

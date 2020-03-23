@@ -37,6 +37,7 @@ function drawScore(){
 			ctx.fillText(`Speed: ${player.speed}`, 20, 585);
 			ctx.fillText(`Power: ${player.power}`, 150, 585);
 			ctx.fillText(`Max: ${player.max_bombs}`, 280, 585);
+			ctx.fillText(`${player.name}`, 380, 585);
 		}
 	}
 

@@ -7,6 +7,7 @@ function GameModel(){
 	this.playerModel = require('../../app/models/player')();
 	this.bombModel = require('../../app/models/bomb')();
 	this.blockModel = require('../../app/models/block')();
+	this.loop = null;
 
 	this.state = {
 		board_size : {x: 17, y: 11},
@@ -33,9 +34,11 @@ function GameModel(){
 		this.state.board = this.createBoard();
 
 		let time = 50;
-		(function(game){setInterval(function(){
-			game.updateGame(time);
-		}, time);})(this)		
+		(function(game){
+			game.loop = setInterval(function(){
+				game.updateGame(time);
+			}, time);
+		})(this)		
 	}
 
 	this.addPlayer = function(player){
@@ -69,6 +72,9 @@ function GameModel(){
 
 	this.removePlayer = function(id){
 		delete this.state.players[id];
+		if(Object.keys(this.state.players).length <= 0){
+			clearInterval(this.loop);
+		}
 	}
 
 	this.setIo = function(io){
@@ -101,6 +107,3 @@ function GameModel(){
 		this.io.to(this.room).emit('updateState', state);
 	}
 }
-
-
-
