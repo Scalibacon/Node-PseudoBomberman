@@ -40,7 +40,6 @@ module.exports.getSocket = function(io){
 				rooms[player.room].game.startGame(player.room);						
 			}
 			addPlayerToRoom(player);
-			console.log(player);
 		});
 
 		socket.on('sendCommand', function(command){

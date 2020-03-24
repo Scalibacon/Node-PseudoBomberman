@@ -2,9 +2,11 @@
 import {socket} from './connection.js';
 
 let state = null;
+let playerInGrass = false;
 
 export function startDrawing(){
 	if(state != null){
+		playerInGrass = isPlayerInGrass();
 		drawScore();
 		drawBoard();
 		drawBombs();
@@ -19,6 +21,22 @@ export function startDrawing(){
 export function updateGameState(stt){
 	state = stt;
 }
+
+function isPlayerInGrass(){
+	for(let index in state.players){
+		let player = state.players[index];
+
+		if(player.id == socket.id){
+			if(state.board[player.y][player.x].grass){
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
 
 function drawScore(){
 	let canvas = document.getElementById('game_canvas');
@@ -40,29 +58,22 @@ function drawScore(){
 			ctx.fillText(`${player.name}`, 380, 585);
 		}
 	}
-
 }
 
 function getTime(milis){
 	let mins = 0;
 	let secs = 0;
-
 	secs = milis / 1000;
-
 	if(secs / 60 >= 0){
 		mins = parseInt(secs / 60);
 		secs = parseInt(secs % 60);
 	}
-
 	if(secs < 10){
 		secs = `0${secs}`;
 	}
-
 	if(mins < 10){
 		mins = `0${mins}`;
 	}
-
-
 	return `${mins}:${secs}`;
 }
 
@@ -74,7 +85,9 @@ function drawBoard(){
 	for(let i = 0; i < 11; i++){
 		for(let j = 0; j < 17; j++){
 
+			//ground
 			ctx.fillStyle = `rgba(60,240,180,1)`;
+			ctx.fillRect(j * 50, i * 50, 50, 50);					
 
 			//steel
 			if(state.board[i][j].obj == 'steel'){
@@ -92,6 +105,16 @@ function drawBoard(){
 			}
 
 			ctx.fillRect(j * 50, i * 50, 50, 50);
+
+			//grass
+			if(state.board[i][j].grass){
+				if(playerInGrass){
+					ctx.fillStyle = `rgba(126, 247, 101, 0.5)`;
+				} else {
+					ctx.fillStyle = `rgba(126, 247, 101, 1)`
+				}
+				ctx.fillRect(j * 50, i * 50, 50, 50);				
+			}			
 		}
 	}
 }
@@ -102,6 +125,10 @@ function drawItens(){
 
 	for(let index in state.itens){
 		let item = state.itens[index];
+
+		if(state.board[item.y][item.x].grass && !playerInGrass){
+			continue;
+		}
 
 		ctx.fillStyle = `rgba(208, 237, 245, 1)`;
 		ctx.fillRect(item.x * 50, item.y * 50, 50, 50);
@@ -130,6 +157,10 @@ function drawPlayers(){
 	for(let index in state.players){
 		let player = state.players[index];
 
+		if(state.board[player.y][player.x].grass && !playerInGrass){
+			continue;
+		}
+
 		if(player.status != "burning"){
 			if(player.id == socket.id){
 				ctx.fillStyle = 'rgba(0,153,255,1)';
@@ -150,6 +181,11 @@ function drawBombs(){
 
 	for(let index in state.bombs){
 		let bomb = state.bombs[index];
+
+		if(state.board[bomb.y][bomb.x].grass && !playerInGrass){
+			continue;
+		}
+
 		let time = parseInt(bomb.time / 1000) + 1;
 
 		ctx.fillStyle = `green`;
@@ -174,6 +210,11 @@ function drawExplosion(){
 
 		for(let range_index in explosion.ranges){
 			let range = explosion.ranges[range_index];
+
+			if(state.board[range.y][range.x].grass && !playerInGrass){
+				continue;
+			}
+
 			ctx.fillRect(range.x * 50, range.y * 50, 50, 50);
 		}
 	}

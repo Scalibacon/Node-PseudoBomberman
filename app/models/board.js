@@ -19,6 +19,8 @@ function generateDefaultBoard(){
 	}
 
 	board = generateRandomBlocks(board);
+	board = generateGrass(board);
+
 	return board;
 }
 
@@ -64,6 +66,16 @@ function generateRandomBlocks(board){
 	return board;
 }
 
+function generateGrass(board){
+	for(let i = 0; i < 11; i++){
+		for(let j = 0; j < 17; j++){
+			if(i >= 2 && i <= 9 && j >= 6 && j <= 10){
+				board[i][j].grass = true;
+			}
+		}
+	}
+	return board;
+}
 
 function initializeBiArray(arr, lines){
 	for(let i = 0; i < lines; i++){

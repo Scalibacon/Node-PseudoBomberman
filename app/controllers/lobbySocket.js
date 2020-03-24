@@ -27,7 +27,6 @@ module.exports.getSocket = function(io){
 				socket.join(data.room);
 			}
 			broadcastUpdate();
-			console.log(data.player);
 		});
 
 		socket.on('exitRoom', function(data){
@@ -108,7 +107,6 @@ function exitRoom(player, socket){
 				if(room.players[1] == undefined && room.players[2] == undefined
 					&& room.players[3] == undefined && room.players[4] == undefined){									
 					rooms[room_index] = resetRoom();
-					console.log(rooms[room_index])
 
 				}			
 				return;
