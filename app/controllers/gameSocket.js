@@ -17,11 +17,6 @@ module.exports.subscribe = function(observer){
 module.exports.getSocket = function(io){
 	startRooms();
 
-	// setInterval(function(){
-	// 	console.log('game')
-	// 	console.log(rooms);
-	// },5000);
-
 	const gameIO = io.of('/game');
 
 	gameIO.on('connection', function(socket){
@@ -29,21 +24,21 @@ module.exports.getSocket = function(io){
 		console.log(`${socket.id} conectou`);		
 
 		//depois validar se pode entrar
-		socket.on('enterRoom', function(player){
-			socket.join(player.room);
-			rooms[player.room].state = 'playing';
+		socket.on('enterRoom', function(data){
+			socket.join(data.room);
+			rooms[data.room].state = 'playing';
 
-			if(rooms[player.room].game == null || rooms[player.room].game == undefined){
-				console.log(`Criando game na sala ${player.room}...`)
-				rooms[player.room].game = gameCreator.createGame();
-				rooms[player.room].game.setIo(gameIO);
-				rooms[player.room].game.startGame(player.room);						
+			if(rooms[data.room].game == null || rooms[data.room].game == undefined){
+				console.log(`Criando game na sala ${data.room}...`)
+				rooms[data.room].game = gameCreator.createGame();
+				rooms[data.room].game.setIo(gameIO);
+				rooms[data.room].game.startGame(data.room);						
 			}
-			addPlayerToRoom(player);
+			addPlayerToRoom(data.player, data.room);
 		});
 
 		socket.on('sendCommand', function(command){
-			rooms[command.player.room].game.makeAnAction(command);
+			rooms[command.room].game.makeAnAction(command);
 		});	
 
 		socket.on('disconnect', function(){
@@ -64,10 +59,6 @@ function startRooms(){
 function resetRoom(){
 	room = {
 		players : {
-			// "1" : null,
-			// "2" : null,
-			// "3" : null,
-			// "4" : null
 		},
 		state : 'waiting',
 		game : null
@@ -76,11 +67,11 @@ function resetRoom(){
 	return room;
 }
 
-function addPlayerToRoom(player){
+function addPlayerToRoom(player, idRoom){
 	for(let i = 1; i <= 4; i++){
-		if(rooms[player.room].players[i] === undefined){
-			rooms[player.room].players[i] = player;
-			rooms[player.room].game.addPlayer(player);
+		if(rooms[idRoom].players[i] === undefined){
+			rooms[idRoom].players[i] = player;
+			rooms[idRoom].game.addPlayer(player);
 			return true;
 		}
 	}

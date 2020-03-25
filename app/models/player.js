@@ -19,7 +19,8 @@ function PlayerModel(state){
 			max_bombs: 1, 
 			power: 1, 
 			status: 'idle', 
-			dir: 'down'
+			dir: 'down',
+			skill : player.skill
 		}
 	}
 

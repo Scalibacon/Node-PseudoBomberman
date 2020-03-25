@@ -1,11 +1,23 @@
-let socket, room, player;
+let socket;
+
+$(document).ready(function() {
+	localStorage.setItem("skill", 0);
+
+	setEvents();
+	connectToLobby();
+});
 
 function setEvents(){
 	let tarolinho = document.getElementById('lobby-info-tarolinho');
 	tarolinho.addEventListener('click', toggleInfo);
-}
 
-setEvents();
+	let skills = document.getElementsByClassName("lobby-info-skill");
+	Array.from(skills).forEach(function(skill) {
+     	skill.addEventListener('click', function(){
+      		changeSkill(skill.id);
+      	});
+    });
+}
 
 let infoOpened = false;
 function toggleInfo(){
@@ -26,20 +38,35 @@ function toggleInfo(){
 function connectToLobby(){
 	socket = io("/lobby"); //localhost
 
+	socket.on('connect', function(){
+		let name = document.getElementById('hidden-name').value;
+	
+		let date = new Date();
+		let time = date.getTime();
+
+		let player = {
+			name : name,
+			id : socket.id, 
+			unikey : time
+		}
+
+		localStorage.setItem("player", JSON.stringify(player));
+	});
+
 	socket.on('updateLobby', function(data){
 		updateLobby(data);
 	});
 
-	socket.on('startGame', function(data){
-		let player = JSON.parse(localStorage.getItem('player'));
-		player.room = data.idRoom;
-		
-		localStorage.setItem("player", JSON.stringify(player));
+	socket.on('enterRoom', function(room){
+		localStorage.setItem('room', room);
+	});
+
+	socket.on('startGame', function(data){		
+		console.log(data.room);
+		localStorage.setItem("room", JSON.stringify(data.idRoom));
 		window.location.href = '/game';
 	})
 }
-
-connectToLobby();
 
 function updateLobby(rooms){
 	let html = '<h2>Salas de jogo</h2>';
@@ -111,36 +138,30 @@ function updateLobby(rooms){
     });
 }
 
+function changeSkill(skill){
+	localStorage.setItem('skill', skill);	
+}
+
 function enterRoom(room){
-	let name = document.getElementById('hidden-name').value;	
-	let date = new Date();
-	let time = date.getTime();
-
-	let player = {
-		name : name,
-		id : socket.id, 
-		unikey : time
-	}
-
-	localStorage.setItem("player", JSON.stringify(player));
+	let player = JSON.parse(localStorage.getItem("player"));
+	player.skill = JSON.parse(localStorage.getItem("skill"));
 
 	let data = {
 		room, 
 		player
 	}
 
-	socket.emit('enterRoom', data)
+	socket.emit('enterRoom', data);
 }
 
 function exitRoom(room){
-	let name = document.getElementById('hidden-name').value;
+	let player = JSON.parse(localStorage.getItem('player'));
 
 	let data = {
 		room, 
-		player : {name : name, id : socket.id}
+		player
 	}
 
-	let player = {name : name, id : socket.id}
 	socket.emit('exitRoom', data);
 }
 

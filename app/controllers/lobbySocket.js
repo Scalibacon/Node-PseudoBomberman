@@ -6,11 +6,6 @@ let lobbyIO;
 module.exports.getSocket = function(io){
 	startRooms();
 
-	// setInterval(function(){
-	// 	console.log('lobby')
-	// 	console.log(rooms);
-	// },5000);
-
 	io = gameSocket.getSocket(io);
 
 	gameSocket.subscribe(updateGameRooms);
@@ -25,6 +20,7 @@ module.exports.getSocket = function(io){
 			exitRoom(data.player, socket);
 			if(enterRoom(data)){
 				socket.join(data.room);
+				socket.emit('enterRoom', data.room);
 			}
 			broadcastUpdate();
 		});
