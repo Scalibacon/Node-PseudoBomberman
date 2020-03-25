@@ -144,7 +144,6 @@ function changeSkill(skill){
 
 function enterRoom(room){
 	let player = JSON.parse(localStorage.getItem("player"));
-	player.skill = JSON.parse(localStorage.getItem("skill"));
 
 	let data = {
 		room, 
