@@ -7,6 +7,7 @@ function GameModel(){
 	this.playerModel = require('../../app/models/player')();
 	this.bombModel = require('../../app/models/bomb')();
 	this.blockModel = require('../../app/models/block')();
+	this.skillModel = require('../../app/models/skill')();
 	this.loop = null;
 
 	this.state = {
@@ -28,6 +29,7 @@ function GameModel(){
 		this.playerModel.setState(this.state);
 		this.bombModel.setState(this.state);
 		this.blockModel.setState(this.state);
+		this.skillModel.setState(this.state);
 
 		this.room = room;
 
@@ -99,6 +101,7 @@ function GameModel(){
 		this.playerModel.checkPlayerTouch();
 		this.bombModel.explosionTimer(time);
 		this.blockModel.ashTimer(time);
+		this.skillModel.updatePlayersSkills(time);
 
 		this.updateClientState(this.state);	
 	}

@@ -1,16 +1,18 @@
 function PlayerModel(state){
 	this.bombModel = require('../../app/models/bomb')();
 	this.itemModel = require('../../app/models/item')();
+	this.skillModel = require('../../app/models/skill')();
 	this.state = state;
 
 	this.setState = function(state){
 		this.state = state;
 		this.bombModel.setState(state);
 		this.itemModel.setState(state);
+		this.skillModel.setState(state);
 	}
 
 	this.createPlayer = function(player, x, y){
-		return {
+		let game_player = {
 			id : player.id,
 			name : player.name,
 			x: x, 
@@ -19,9 +21,12 @@ function PlayerModel(state){
 			max_bombs: 1, 
 			power: 1, 
 			status: 'idle', 
-			dir: 'down',
-			skill : player.skill
+			dir: 'down'
 		}
+
+		this.skillModel.setSkill(game_player, player.skill);
+
+		return game_player;
 	}
 
 	this.checkPlayerTouch = function(){
@@ -77,6 +82,10 @@ function PlayerModel(state){
 	this.e = function(player){	
 		this.bombModel.addBomb(player);		
 	}	
+
+	this.q = function(player){	
+		this.skillModel.useSkill(player);
+	}
 
 	this.walk = function(player){
 		let destination = {x: player.x, y: player.y};
