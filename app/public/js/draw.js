@@ -37,7 +37,6 @@ function isPlayerInGrass(){
 	return false;
 }
 
-
 function drawScore(){
 	let canvas = document.getElementById('game_canvas');
 	let ctx = canvas.getContext('2d');
@@ -57,7 +56,7 @@ function drawScore(){
 			ctx.fillText(`Max: ${player.max_bombs}`, 280, 585);
 
 			ctx.fillText(`${player.name}`, 390, 585);
-			ctx.fillText(`${player.skill}`, 540, 585);
+			ctx.fillText(`${player.skill.name}`, 540, 585);
 		}
 	}
 }
@@ -164,10 +163,28 @@ function drawPlayers(){
 		}
 
 		if(player.status != "burning"){
+			if(player.skill.id === 2 && player.skill.using){
+				ctx.beginPath();
+				ctx.lineWidth = "6";
+				ctx.strokeStyle = "rgba(255,255,0,0.75)";
+				ctx.rect(player.x * 50 + 5, player.y * 50 + 5, 40, 40);
+				ctx.stroke();
+			}
+
 			if(player.id == socket.id){
-				ctx.fillStyle = 'rgba(0,153,255,1)';
+				//furtividade
+				if(player.skill.id === 1 && player.skill.using)
+					ctx.fillStyle = 'rgba(0,153,255,0.66)';
+				else 
+					ctx.fillStyle = 'rgba(0,153,255,1)';
+				
 			} else {
-				ctx.fillStyle = `orange`;
+
+				if(player.skill.id === 1 && player.skill.using)
+					ctx.fillStyle = `rgba(255,165,0,0)`;
+				else 
+					ctx.fillStyle = `rgba(255,165,0,1)`;
+
 			}
 		} else {
 			ctx.fillStyle = `gray`;

@@ -105,16 +105,21 @@ function PlayerModel(state){
 				break;
 		}
 
-		if(this.checkDestination(destination)){
+		if(this.checkDestination(player, destination)){
 			this.updatePosition(player, destination);
 		}
 	}
 
-	this.checkDestination = function(destination){
+	this.checkDestination = function(player, destination){
 		//border
 		if(destination.x < 0 || destination.x >= 17 || destination.y < 0 || destination.y >= 11){
 			return false;
 		}
+
+		if(player.skill.id === 2 && player.skill.using){
+			return true;
+		}
+
 		//steel
 		if(this.state.board[destination.y][destination.x].obj == "steel"){
 			return false;

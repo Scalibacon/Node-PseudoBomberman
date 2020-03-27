@@ -139,6 +139,9 @@ function updateLobby(rooms){
 }
 
 function changeSkill(skill){
+	$('.lobby-info-skill').css({border : 'solid 1px rgba(200,200,200,0.75)'});
+	$('.skill'+skill).css({border : 'solid 2px rgb(0,100,255,1)'});
+
 	localStorage.setItem('skill', skill);	
 }
 

@@ -1,5 +1,4 @@
 module.exports.entrar = function(req, res){
-	console.log(req);
 	let name = req.body.name;
 	if(name == ""){
 		res.render('index', {erro : 'empty'});

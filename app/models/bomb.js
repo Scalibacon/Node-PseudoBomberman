@@ -28,22 +28,19 @@ function BombModel(state){
 			return;
 		}
 
-		if(this.state.board[player.y][player.x].bomb){
+		if(this.state.board[player.y][player.x].bomb || this.state.board[player.y][player.x].obj !== 'empty'){
 			return;
 		}
 
-		//check if the spot can have a bomb
-		if(this.state.board[player.y][player.x].obj != 'depoistrocaisso'){
-			let bomb = {
-				user : player.id,
-				x : player.x,
-				y : player.y,
-				time : 3000,
-				power : player.power
-			}
-			this.state.bombs.push(bomb);
-			this.state.board[bomb.y][bomb.x].bomb = bomb;
+		let bomb = {
+			user : player.id,
+			x : player.x,
+			y : player.y,
+			time : 3000,
+			power : player.power
 		}
+		this.state.bombs.push(bomb);
+		this.state.board[bomb.y][bomb.x].bomb = bomb;		
 	}
 
 	this.checkBombs = function(playerId){
