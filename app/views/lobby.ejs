@@ -12,33 +12,19 @@
 </head>
 
 <body>
-	<div id="background"></div>
+	<input type=hidden id='hidden-name' value='<%= session.name %>'>
 
-	<div id="lobby-info-container">
-		<div id="lobby-info-tarolinho"><img src='img/arrow.png' id='tarolinho-arrow'></div>
-		<div id="lobby-info-body">
-			<h5 id='lobby-info-name'><%= session.name %></h5>
-			<input type=hidden id='hidden-name' value='<%= session.name %>'>
-			<div class='lobby-stuff-container' id='skills-container'>
-				<p class='lobby-info-title'>Habilidades</p>
-				<div class='lobby-info-skill skill0' id='0'></div>
-				<div class='lobby-info-skill skill1' id='1'></div>
-				<div class='lobby-info-skill skill2' id='2'></div>
-				<div class='lobby-info-skill skill3' id='3'></div>
-				<div class='lobby-info-skill skill4' id='4'></div>
-				<div class='lobby-info-skill skill5' id='5'></div>
+	<div id='lobby-container'>
+		<section id="info-container">
+			<div id="arrow-box"><img src='img/arrow.png' id='toggle-arrow'></div>
+			<div id="lobby-info-body">
+				<h5 id='player-name'><%= session.name %></h5>				
+				<div class='stuff-container' id='skills-container'></div>
 			</div>
-			<div class='lobby-stuff-container'>
-				<p class='lobby-info-title'>Skins</p>
-				<div class='lobby-info-skin'></div>
-				<div class='lobby-info-skin'></div>
-				<div class='lobby-info-skin'></div>
-			</div>
-		</div>
-	</div>
-
-	<div id="lobby-center-container">		
-	</div>
+		</section>
+	
+		<div id="rooms-container"></div>
+	</div>>	
 
 	<script src="js/lobby.js" type='module'></script>
 </body>

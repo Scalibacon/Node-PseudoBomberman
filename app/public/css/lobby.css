@@ -1,20 +1,19 @@
 *{
 	margin: 0px;
 	padding: 0px;
+	box-sizing: border-box;
 }
-#background{
-	position:fixed;
-	top:0;
+#lobby-container{
 	width:100%;
-	height:100%;
+	height:100vh;
 	background-image: url('/img/bg-lobby.png');
 	background-repeat: no-repeat;
 	background-size: cover;
+	padding-top: 70px;
 }
-#lobby-info-container{
+#info-container{
 	position:fixed;
 	left:-150px;
-	top:70px;
 	width:200px;
 	height:auto;
 	/*background-color:snow;*/
@@ -22,7 +21,7 @@
 
 	transition: 0.5s ease;
 }
-#lobby-info-tarolinho{
+#arrow-box{
 	position:relative;
 	float:right;
 	width:50px;
@@ -32,7 +31,7 @@
 	z-index:3;
 	cursor:pointer;	
 }
-#tarolinho-arrow{
+#toggle-arrow{
 	width:50%;
 	margin:25%;
 	transition: 0.5s ease;
@@ -45,14 +44,14 @@
 	box-shadow:1px 1px 5px 1px rgba(0,0,0,0.5);
 	z-index:2;
 }
-#lobby-info-name{
+#player-name{
 	text-align:center;
 	line-height:50px;
 	height:50px;
 	margin:0px;
 	background-color:orange;
 }
-.lobby-stuff-container{
+.stuff-container{
 	width:150px;
 	height:auto;
 	overflow:overlay;
@@ -110,11 +109,10 @@
 	cursor:pointer;
 }
 
-#lobby-center-container{
+#rooms-container{
 	width: 950px;
 	height: auto;
 	overflow:overlay;
-	margin-top: 70px;
 	border:solid 1px rgba(0,153,255,1);
 	text-align: center;
 	box-sizing: border-box;

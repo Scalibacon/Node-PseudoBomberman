@@ -1,10 +1,12 @@
 //import {game} from './backend/game.js';
-import {socket} from './connection.js';
+import {socket, subscribe } from './websockets/game.js';
 
 let state = null;
 let playerInGrass = false;
 
 export function startDrawing(){
+	subscribe(updateGameState);
+
 	if(state != null){
 		playerInGrass = isPlayerInGrass();
 		drawScore();

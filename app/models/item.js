@@ -31,6 +31,18 @@ function ItemModel(state){
 		this.state.board[item.y][item.x].item = null;
 		this.state.itens.splice(index, 1);	
 	}
+
+	this.checkItemTouch = function(){
+		for(let i in this.state.itens){
+			let item = this.state.itens[i];	
+
+			let slot = this.state.board[item.y][item.x];
+
+			if(slot.obj == 'explosion'){
+				this.removeItem(item);
+			}
+		}		
+	}
 }
 
 function randomItem(){

@@ -1,14 +1,24 @@
-let socket;
+import  {subscribe, connectToLobby, enterRoom, exitRoom, startGame, socket } from './websockets/lobby.js';
 
 $(document).ready(function() {
+	createSkills();
 	localStorage.setItem("skill", 0);
 
 	setEvents();
+	subscribe(updateLobby);
 	connectToLobby();
 });
 
+function createSkills(){
+	let html = '<p class="lobby-info-title">Habilidades</p>';
+	for(let i = 0; i <= 5; i++){
+		html += `<div class='lobby-info-skill skill${i}' id='${i}'></div>`
+	}
+	document.getElementById('skills-container').innerHTML = html;
+}
+
 function setEvents(){
-	let tarolinho = document.getElementById('lobby-info-tarolinho');
+	let tarolinho = document.getElementById('arrow-box');
 	tarolinho.addEventListener('click', toggleInfo);
 
 	let skills = document.getElementsByClassName("lobby-info-skill");
@@ -21,8 +31,8 @@ function setEvents(){
 
 let infoOpened = false;
 function toggleInfo(){
-	let info = document.getElementById('lobby-info-container');
-	let arrow = document.getElementById('tarolinho-arrow');
+	let info = document.getElementById('info-container');
+	let arrow = document.getElementById('toggle-arrow');
 	if(infoOpened){
 		info.style.left = '-150px';
 		//arrow.style.transform = 'scaleX(1)';
@@ -35,42 +45,9 @@ function toggleInfo(){
 	infoOpened = !infoOpened;	
 }
 
-function connectToLobby(){
-	socket = io("/lobby"); //localhost
-
-	socket.on('connect', function(){
-		let name = document.getElementById('hidden-name').value;
-	
-		let date = new Date();
-		let time = date.getTime();
-
-		let player = {
-			name : name,
-			id : socket.id, 
-			unikey : time
-		}
-
-		localStorage.setItem("player", JSON.stringify(player));
-	});
-
-	socket.on('updateLobby', function(data){
-		updateLobby(data);
-	});
-
-	socket.on('enterRoom', function(room){
-		localStorage.setItem('room', room);
-	});
-
-	socket.on('startGame', function(data){		
-		console.log(data.room);
-		localStorage.setItem("room", JSON.stringify(data.idRoom));
-		window.location.href = '/game';
-	})
-}
-
 function updateLobby(rooms){
 	let html = '<h2>Salas de jogo</h2>';
-	let position = 0;
+	let position = 0;	
 
 	for(let prop in rooms){
 		let room = rooms[prop];
@@ -78,23 +55,19 @@ function updateLobby(rooms){
 		html += '<div class="room-container">' +
 					'<h4>Sala ' + prop + '</h4>' +
 					'<div class="room-players-container">';
-
-		for(let i = 1; i <= 4; i++){
-			html += '<div class="room-player">' +
-						'<img class="room-player-img empty">';
+		for(let i = 1; i <= 4; i++){			
+			html += 	'<div class="room-player">' +
+							'<img class="room-player-img empty">';
 			if(room.players[i]){
-				html +=	'<span class="room-player-name">' + room.players[i].name + '</span>';
-
+				html +=		'<span class="room-player-name">' + room.players[i].name + '</span>';
 				if(room.players[i].id === socket.id){
 					position = i;
 				}
 			} else {
-				html +=	'<span class="room-player-name empty"></span>';					
+				html +=		'<span class="room-player-name empty"></span>';					
 			}
-
-			html += '</div>';
+			html += 	'</div>';
 		}
-
 		html += 	'</div>';
 
 		if(room.state == 'playing'){
@@ -107,15 +80,18 @@ function updateLobby(rooms){
 			}
 		} else {
 			html +=		'<button type="button" id="' + prop + '" class="btn btn-primary btn-room-enter">Entrar</button>';
-		}		
-		
+		}			
 		html +=	'</div>';
 		position = 0;
-	}	
+	}
 
-	let container = document.getElementById('lobby-center-container');
+	let container = document.getElementById('rooms-container');
 	container.innerHTML = html;
 
+	setRoomButtonsEvents();
+}
+
+function setRoomButtonsEvents(){
 	let btnEnter = document.getElementsByClassName("btn-room-enter");
 	Array.from(btnEnter).forEach(function(btn) {
      	btn.addEventListener('click', function(){
@@ -143,30 +119,4 @@ function changeSkill(skill){
 	$('.skill'+skill).css({border : 'solid 2px rgb(0,100,255,1)'});
 
 	localStorage.setItem('skill', skill);	
-}
-
-function enterRoom(room){
-	let player = JSON.parse(localStorage.getItem("player"));
-
-	let data = {
-		room, 
-		player
-	}
-
-	socket.emit('enterRoom', data);
-}
-
-function exitRoom(room){
-	let player = JSON.parse(localStorage.getItem('player'));
-
-	let data = {
-		room, 
-		player
-	}
-
-	socket.emit('exitRoom', data);
-}
-
-function startGame(room){
-	socket.emit('startGame', room);
 }

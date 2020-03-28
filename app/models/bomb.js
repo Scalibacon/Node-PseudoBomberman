@@ -1,14 +1,10 @@
-let state = {};
-
-function BombModel(state){
-	this.blockModel = require('../../app/models/block')();
-	this.itemModel = require('../../app/models/item')();
+function BombModel(state){	
+	this.explosionModel = require('../../app/models/explosion')();
 	this.state = state;
 
 	this.setState = function(state){
-		this.state = state;
-		this.blockModel.setState(state);
-		this.itemModel.setState(state);
+		this.state = state;		
+		this.explosionModel.setState(state);
 	}
 
 	this.bombTimer = function(time){
@@ -62,29 +58,6 @@ function BombModel(state){
 		this.state.bombs.splice(index, 1);
 	}
 
-	/********************** EXPLOSION **********************/
-
-	this.explosionTimer = function(time){
-		for(let index in this.state.explosions){
-			let explosion = this.state.explosions[index];
-
-			if(explosion.time > 0){
-				explosion.time -= time;
-			} else {
-				this.removeExplosion(explosion);
-			}
-		}
-	}
-
-	this.removeExplosion = function(explosion){
-		const index = this.state.explosions.indexOf(explosion);
-		this.state.explosions.splice(index, 1);
-
-		for(let i = 0; i < explosion.ranges.length; i++){
-			this.state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
-		}	
-	}
-
 	this.explode = function(bomb){
 		this.removeBomb(bomb);
 
@@ -95,89 +68,18 @@ function BombModel(state){
 			time : 750
 		}
 
-		explosion.ranges = this.calculateExplosionRange(explosion);
+		explosion.ranges = this.explosionModel.calculateExplosionRange(explosion);
 		this.state.explosions.push(explosion);
 	}
 
-	this.calculateExplosionRange = function(explosion){
-		let factorX = [1, -1, 0, 0];
-		let factorY = [0, 0, 1, -1];
+	this.checkBombTouch = function(){
+		for(let i in this.state.bombs){
+			let bomb = this.state.bombs[i];	
 
-		let ranges = [];
+			let slot = this.state.board[bomb.y][bomb.x];
 
-		ranges.push(explosion.center);
-		this.state.board[explosion.center.y][explosion.center.x].obj = 'explosion';
-
-		for(let factor = 0; factor < 4; factor++){
-			for(let i = 1; i <= explosion.power; i++){
-				let next = {x: explosion.center.x + (i * factorX[factor]), y: explosion.center.y + (i * factorY[factor])};
-				let ret = this.checkExplosionRange(next);
-				if(ret.canExplode){
-					ranges.push(next);
-					this.state.board[next.y][next.x].obj = 'explosion';
-					if(ret.stop){
-						break;
-					}
-				} else {
-					break;
-				}
-			}
-		}	
-
-		return ranges;
-	}
-
-	this.checkExplosionRange = function(next){
-		var result = {
-			canExplode : false, 
-			stop : true
-		};
-
-		if(next.x < 0 || next.x >= 17 || next.y < 0 || next.y >= 11){
-			return result;
-		}
-
-		if(this.state.board[next.y][next.x].bomb){
-			result.canExplode = true;
-			return result;
-		}
-
-		if(this.state.board[next.y][next.x].obj == 'steel'){
-			return result;
-		}
-
-		if(this.state.board[next.y][next.x].obj == 'explosion'){
-			result.stop = false;
-			return result;
-		}
-
-		if(this.state.board[next.y][next.x].obj == 'block'){
-			this.blockModel.turnToAsh(next.x, next.y);
-			return result;
-		}
-
-		result.canExplode = true;
-		result.stop = false;
-
-		return result;
-	}
-
-	this.checkExplosionHit = function(){
-		for(let index in this.state.explosions){
-			let explosion = this.state.explosions[index];
-
-			for(let range_index in explosion.ranges){
-				let range = explosion.ranges[range_index];
-
-				let slot = this.state.board[range.y][range.x];
-
-				if(slot.bomb){
-					this.explode(slot.bomb);
-				}
-
-				if(slot.item){
-					this.itemModel.removeItem(slot.item);
-				}
+			if(slot.obj == 'explosion'){
+				this.explode(bomb);
 			}
 		}
 	}

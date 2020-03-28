@@ -1,6 +1,6 @@
 import {startDrawing} from './draw.js';
 import {createKeyboardListener} from './input.js';
-import {connectToGameSocket, sendCommand} from './connection.js';
+import {connectToGameSocket, sendCommand} from './websockets/game.js';
 
 function renderCanvas(){
 	//generate canvas

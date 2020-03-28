@@ -1,10 +1,12 @@
+const arrays = require('../utils/arrays');
+
 module.exports = function(){
 	return generateDefaultBoard();
 }
 
 function generateDefaultBoard(){
 	let board = [];
-	board = initializeBiArray(board, 11);
+	board = arrays.initializeBiArray(board, 11);
 	for(let i = 0; i < 11; i++){
 		for(let j = 0; j < 17; j++){
 			board[i][j] = {
@@ -75,11 +77,4 @@ function generateGrass(board){
 		}
 	}
 	return board;
-}
-
-function initializeBiArray(arr, lines){
-	for(let i = 0; i < lines; i++){
-		arr[i] = [];
-	}
-	return arr;
 }
