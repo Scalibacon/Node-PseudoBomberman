@@ -164,7 +164,7 @@ function drawPlayers(){
 			continue;
 		}
 
-		if(player.status != "burning"){
+		if(player.status != "dead"){
 			if(player.skill.id === 2 && player.skill.using){
 				ctx.beginPath();
 				ctx.lineWidth = "6";

@@ -36,8 +36,8 @@ function PlayerModel(state){
 			let slot = this.state.board[player.y][player.x];
 
 			if(slot.obj == 'explosion'){
-				if(player.status != "burning"){
-					player.status = "burning";
+				if(player.status != "dead"){
+					player.status = "dead";
 					console.log(`${playerId} was burned :O`);
 				}
 			}

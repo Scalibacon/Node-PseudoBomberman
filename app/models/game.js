@@ -20,7 +20,8 @@ function GameModel(){
 		explosions : [],
 		ashes : [],
 		itens : [],
-		time : 0
+		time : 0,
+		status : 'running'
 	}
 
 	this.room = null;
@@ -34,6 +35,8 @@ function GameModel(){
 		this.blockModel.setState(this.state);
 		this.itemModel.setState(this.state);
 		this.skillModel.setState(this.state);
+
+		this.state.status = 'running';
 
 		this.room = room;
 
@@ -88,6 +91,10 @@ function GameModel(){
 	}
 
 	this.makeAnAction = function(command){
+		if(this.state.status === 'finished'){
+			return;
+		}
+
 		let player = this.state.players[command.player.id];
 		if(player == null || player == undefined){
 			return;
@@ -95,6 +102,58 @@ function GameModel(){
 
 		if(this.playerModel[command.keyPressed]){
 			this.playerModel[command.keyPressed](player);
+		}
+	}
+
+	this.checkPlayersAlive = function(){
+		let playersAlive = 0;
+
+		for(let playerId in this.state.players){
+			let player = this.state.players[playerId];	
+
+			if(player.status !== 'dead'){
+				playersAlive++;
+			}
+		}
+
+		if( (Object.keys(this.state.players).length === 1 && playersAlive === 0) ||
+			(Object.keys(this.state.players).length > 1 && playersAlive <= 1) ){
+			if(this.state.status !== 'finished'){
+				this.finishGame();
+			}
+		}
+	}
+
+	this.finishGame = function(){
+		//depois emitir pros sockets
+		this.state.status = 'finished';		
+
+		setTimeout(() => {
+			clearInterval(this.loop);
+			this.resetGame();						
+			this.startGame(this.room);
+		}, 3000);
+	}
+
+	this.resetGame = function(){
+		this.state.board = [];
+		this.state.bombs = [];
+		this.state.explosion = [];
+		this.state.ashes = [];
+		this.state.itens = [];
+		this.state.time = 0;
+
+		for(let i in this.state.players){
+			let player = this.state.players[i];
+			player.speed = 1;
+			player.max_bombs = 1;
+			player.power = 1; 
+			player.status = 'idle';
+			player.dir = 'down';
+			player.y = player.skill.spot[0];
+			player.x = player.skill.spot[1];
+
+			this.skillModel.setSkill(player, player.skill.id);
 		}
 	}
 
@@ -106,9 +165,11 @@ function GameModel(){
 		this.playerModel.checkPlayerTouch();
 		this.explosionModel.explosionTimer(time);
 		this.blockModel.ashTimer(time);
-		this.skillModel.updatePlayersSkills(time);
+		this.skillModel.updatePlayersSkills(time);		
 
 		this.updateClientState(this.state);	
+
+		this.checkPlayersAlive();
 	}
 
 	this.updateClientState = function(state){
