@@ -1,12 +1,17 @@
-//import {game} from './backend/game.js';
+import * as resources from './resources.js'
 import {socket, subscribe } from './websockets/game.js';
 
 let state = null;
 let playerInGrass = false;
 
-export function startDrawing(){
-	subscribe(updateGameState);
+export function prepareDrawing(){
+	resources.load('img/sprite-player.png');
+	resources.onReady(draw);
 
+	subscribe(updateGameState);
+}
+
+function draw(){
 	if(state != null){
 		playerInGrass = isPlayerInGrass();
 		drawScore();
@@ -17,7 +22,7 @@ export function startDrawing(){
 		drawPlayers();
 	}
 
-	requestAnimationFrame(startDrawing);
+	requestAnimationFrame(draw);
 }
 
 export function updateGameState(stt){

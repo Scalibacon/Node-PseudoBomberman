@@ -78,7 +78,7 @@ function BombModel(state){
 
 			let slot = this.state.board[bomb.y][bomb.x];
 
-			if(slot.obj == 'explosion'){
+			if(slot.obj == 'explosion' || slot.obj == 'steel'){
 				this.explode(bomb);
 			}
 		}

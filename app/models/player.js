@@ -153,7 +153,7 @@ function PlayerModel(state){
 			player.x = destination.x;
 			player.y = destination.y;
 			setTimeout(function(){
-				if(player.status != "burning"){
+				if(player.status != "dead"){
 					player.status = "idle"; 
 				}
 			}, delay);

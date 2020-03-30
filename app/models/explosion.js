@@ -27,7 +27,8 @@ function ExplosionModel(state){
 		this.state.explosions.splice(index, 1);
 
 		for(let i = 0; i < explosion.ranges.length; i++){
-			this.state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
+			if(this.state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj === 'explosion')
+				this.state.board[explosion.ranges[i].y][explosion.ranges[i].x].obj = 'empty';
 		}	
     }
     
@@ -38,7 +39,8 @@ function ExplosionModel(state){
 		let ranges = [];
 
 		ranges.push(explosion.center);
-		this.state.board[explosion.center.y][explosion.center.x].obj = 'explosion';
+		if(this.state.board[explosion.center.y][explosion.center.x].obj !== 'steel')
+			this.state.board[explosion.center.y][explosion.center.x].obj = 'explosion';
 
 		for(let factor = 0; factor < 4; factor++){
 			for(let i = 1; i <= explosion.power; i++){

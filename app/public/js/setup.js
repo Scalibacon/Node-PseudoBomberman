@@ -1,4 +1,4 @@
-import {startDrawing} from './draw.js';
+import { prepareDrawing } from './draw.js';
 import {createKeyboardListener} from './input.js';
 import {connectToGameSocket, sendCommand} from './websockets/game.js';
 
@@ -19,8 +19,8 @@ function renderCanvas(){
 	//exactly what the name means
 	connectToGameSocket();
 
-	//start drawing game state to canvas
-	startDrawing();
+	//prepare the canvas to draw
+	prepareDrawing();
 }
 
 renderCanvas();

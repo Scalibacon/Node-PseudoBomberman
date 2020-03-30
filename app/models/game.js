@@ -36,14 +36,15 @@ function GameModel(){
 		this.itemModel.setState(this.state);
 		this.skillModel.setState(this.state);
 
-		this.state.status = 'running';
-
+		this.state.status = 'starting';
 		this.room = room;
-
 		this.state.board = this.createBoard();
+
+		this.io.to(this.room).emit('startingState', this.state);
 
 		let time = 50;
 		(function(game){
+			game.state.status = 'running';
 			game.loop = setInterval(function(){
 				game.updateGame(time);
 			}, time);
@@ -126,7 +127,8 @@ function GameModel(){
 
 	this.finishGame = function(){
 		//depois emitir pros sockets
-		this.state.status = 'finished';		
+		this.state.status = 'finished';	
+		this.io.to(this.room).emit('finishGame', this.state);	
 
 		setTimeout(() => {
 			clearInterval(this.loop);
@@ -142,6 +144,8 @@ function GameModel(){
 		this.state.ashes = [];
 		this.state.itens = [];
 		this.state.time = 0;
+
+		this.blockModel.fallingSpot = {x: 0, y: 0};
 
 		for(let i in this.state.players){
 			let player = this.state.players[i];
@@ -165,7 +169,11 @@ function GameModel(){
 		this.playerModel.checkPlayerTouch();
 		this.explosionModel.explosionTimer(time);
 		this.blockModel.ashTimer(time);
-		this.skillModel.updatePlayersSkills(time);		
+		this.skillModel.updatePlayersSkills(time);	
+		
+		if(this.state.time > 300000 && this.state.time % 100 == 0){
+			this.blockModel.fallSteel();
+		}
 
 		this.updateClientState(this.state);	
 

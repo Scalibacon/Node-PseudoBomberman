@@ -1,6 +1,7 @@
 function BlockModel(state){
 	this.itemModel = require('../../app/models/item')();
 	this.state = state;
+	this.fallingSpot = {x: 0, y: 0};	
 
 	this.setState = function(state){
 		this.state = state;
@@ -40,6 +41,36 @@ function BlockModel(state){
 		this.state.board[ash.y][ash.x].obj = 'empty';
 
 		this.itemModel.dropItem(ash.x, ash.y);
+	}
+
+	this.fallSteel = function(){
+		let x = JSON.parse(JSON.stringify(this.fallingSpot.x));
+		let y = JSON.parse(JSON.stringify(this.fallingSpot.y));
+		
+		this.fallingSpot.x++;		
+
+		if(this.fallingSpot.x >= 17){
+			this.fallingSpot.x = 0;
+			this.fallingSpot.y++;
+		}
+
+		if(x >= 17 || y >= 11){
+			return;
+		}
+
+		if(this.state.board[y][x].obj === 'steel'){
+			return;
+		}
+
+		this.state.board[y][x].obj = 'steel';
+	
+		for(let playerId in this.state.players){
+			let player = this.state.players[playerId];	
+
+			if(player.y == y && player.x == x){
+				player.status = 'dead';
+			}
+		}
 	}
 }
 
